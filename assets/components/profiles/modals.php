@@ -7,7 +7,7 @@ use App\Auth\Permissions; ?>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalFDQualiLabel">Fachdienste</h5>
+                <h5 class="modal-title" id="modalFDQualiLabel"><?= __('personnel.modals.specialities.title') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="fdqualiForm" method="post">
@@ -15,80 +15,80 @@ use App\Auth\Permissions; ?>
                     <div class="mb-3">
                         <?php
                         $fdqualis = json_decode($row['fachdienste'], true) ?? [];
-                        if ($canEdit) { ?>
+                        if (Permissions::check(['admin', 'personnel.edit'])) { ?>
                             <input type="hidden" name="new" value="4" />
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Ja/Nein</th>
-                                        <th colspan="2">Bezeichnung</th>
+                                        <th><?= __('personnel.modals.specialities.yes_no') ?></th>
+                                        <th colspan="2"><?= __('personnel.modals.specialities.name') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="211" <?php if (in_array('211', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>211</td>
-                                        <td>Integrierte Leitstelle</td>
+                                        <td><?= __('personnel.specialities.names.211') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="212" <?php if (in_array('212', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>212</td>
-                                        <td>Einsatzleitdienst</td>
+                                        <td><?= __('personnel.specialities.names.212') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="213" <?php if (in_array('213', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>213</td>
-                                        <td>Presseabteilung</td>
+                                        <td><?= __('personnel.specialities.names.213') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="221" <?php if (in_array('221', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>221</td>
-                                        <td>FW Schule</td>
+                                        <td><?= __('personnel.specialities.names.221') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="222" <?php if (in_array('222', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>222</td>
-                                        <td>Personaleinsatz BF</td>
+                                        <td><?= __('personnel.specialities.names.222') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="223" <?php if (in_array('223', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>223</td>
-                                        <td>Lager und Logistik</td>
+                                        <td><?= __('personnel.specialities.names.223') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="231" <?php if (in_array('231', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>231</td>
-                                        <td>Spezialrettung</td>
+                                        <td><?= __('personnel.specialities.names.231') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="232" <?php if (in_array('232', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>232</td>
-                                        <td>CBRN-Schutz</td>
+                                        <td><?= __('personnel.specialities.names.232') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="233" <?php if (in_array('233', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>233</td>
-                                        <td>Krisenintervention</td>
+                                        <td><?= __('personnel.specialities.names.233') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="411" <?php if (in_array('411', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>411</td>
-                                        <td>RD Schule</td>
+                                        <td><?= __('personnel.specialities.names.411') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="412" <?php if (in_array('412', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>412</td>
-                                        <td>Einsatzleitung RD</td>
+                                        <td><?= __('personnel.specialities.names.412') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="413" <?php if (in_array('413', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>413</td>
-                                        <td>Luftrettung</td>
+                                        <td><?= __('personnel.specialities.names.413') ?></td>
                                     </tr>
                                     <tr>
                                         <td><input type="checkbox" name="fachdienste[]" value="414" <?php if (in_array('414', $fdqualis)) echo 'checked'; ?>></td>
                                         <td>414</td>
-                                        <td>Qualitätsmanagement RD</td>
+                                        <td><?= __('personnel.specialities.names.414') ?></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -96,9 +96,9 @@ use App\Auth\Permissions; ?>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                    <?php if ($canEdit) { ?>
-                        <button type="button" class="btn btn-success" id="fdq-save" onclick="document.getElementById('fdqualiForm').submit()">Speichern</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('personnel.modals.close') ?></button>
+                    <?php if (Permissions::check(['admin', 'personnel.edit'])) { ?>
+                        <button type="button" class="btn btn-success" id="fdq-save" onclick="document.getElementById('fdqualiForm').submit()"><?= __('personnel.modals.save') ?></button>
                     <?php } ?>
                 </div>
             </form>
@@ -112,7 +112,7 @@ use App\Auth\Permissions; ?>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalNewCommentLabel">Neue Notiz erstellen</h5>
+                <h5 class="modal-title" id="modalNewCommentLabel"><?= __('personnel.modals.notes.title') ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="newNoteForm" method="post">
@@ -120,17 +120,17 @@ use App\Auth\Permissions; ?>
                     <div class="mb-3">
                         <input type="hidden" name="new" value="5" />
                         <select class="form-select mb-2" name="noteType" id="noteType">
-                            <option value="0">Allgemein</option>
-                            <option value="1">Positiv</option>
-                            <option value="2">Negativ</option>
+                            <option value="0"><?= __('personnel.modals.notes.options.0') ?></option>
+                            <option value="1"><?= __('personnel.modals.notes.options.1') ?></option>
+                            <option value="2"><?= __('personnel.modals.notes.options.2') ?></option>
                         </select>
-                        <textarea class="form-control" name="content" id="content" rows="3" placeholder="Notiztext" style="resize:none"></textarea>
+                        <textarea class="form-control" name="content" id="content" rows="3" placeholder="<?= __('personnel.modals.notes.note_text') ?>" style="resize:none"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                    <?php if ($canView) { ?>
-                        <button type="button" class="btn btn-success" id="fdq-save" onclick="document.getElementById('newNoteForm').submit()">Speichern</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('personnel.modals.close') ?></button>
+                    <?php if (Permissions::check(['admin', 'personnel.view'])) { ?>
+                        <button type="button" class="btn btn-success" id="fdq-save" onclick="document.getElementById('newNoteForm').submit()"><?= __('personnel.modals.save') ?></button>
                     <?php } ?>
                 </div>
             </form>
@@ -151,12 +151,12 @@ use App\Auth\Permissions; ?>
                 <form id="newNoteForm" method="post">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <p>Die Mitarbeiterakte von <strong><?= $row['fullname'] ?></strong> wird mit der Bestätigung <strong>unwiderruflich gelöscht</strong>. Es ist nicht möglich diese im Nachhinein wiederherzustellen.</p>
+                            <p><?= __('personnel.modals.delete.text', [$row['fullname']]) ?></p>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                        <a href="/admin/personal/delete.php?id=<?= $row['id'] ?>" type="button" class="btn btn-danger" id="complete-delete">Endgültig löschen</a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('personnel.modals.delete.abort') ?></button>
+                        <a href="/admin/personal/delete.php?id=<?= $row['id'] ?>" type="button" class="btn btn-danger" id="complete-delete"><?= __('personnel.modals.delete.confirm') ?></a>
                     </div>
                 </form>
             </div>
@@ -171,7 +171,7 @@ use App\Auth\Permissions; ?>
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalDokuCreateLabel">Dokument anlegen</h5>
+                    <h5 class="modal-title" id="modalDokuCreateLabel"><?= __('personnel.modals.documents.title') ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="newDocForm" method="post">
@@ -184,20 +184,20 @@ use App\Auth\Permissions; ?>
                             <input type="hidden" name="aussteller_name" value="<?= $edituseric ?>" />
                             <input type="hidden" name="aussteller_rang" value="<?= $editdg ?>" />
                             <input type="hidden" name="profileid" value="<?= $openedID ?>" />
-                            <label for="docType">Dokumenten-Typ</label>
+                            <label for="docType"><?= __('personnel.modals.documents.type') ?></label>
                             <select class="form-select mb-2" name="docType" id="docType">
-                                <option disabled hidden selected>Bitte wählen</option>
-                                <option value="0">Ernennungsurkunde</option>
-                                <option value="1">Beförderungsurkunde</option>
-                                <option value="2">Entlassungsurkunde</option>
+                                <option disabled hidden selected><?= __('personnel.modals.documents.please_select') ?></option>
+                                <option value="0"><?= __('personnel.profile.documents.types.0') ?></option>
+                                <option value="1"><?= __('personnel.profile.documents.types.1') ?></option>
+                                <option value="2"><?= __('personnel.profile.documents.types.2') ?></option>
                                 <!-- <option value="3">Ausbildungsvertrag</option> -->
-                                <option value="5">Ausbildungszertifikat</option>
-                                <option value="6">Lehrgangszertifikat</option>
-                                <option value="7">Lehrgangszertifikat (Fachdienste)</option>
-                                <option value="10">Schriftliche Abmahnung</option>
-                                <option value="11">Vorläufige Dienstenthebung</option>
-                                <option value="12">Dienstentfernung</option>
-                                <option value="13">Außerordentliche Kündigung</option>
+                                <option value="5"><?= __('personnel.profile.documents.types.5') ?></option>
+                                <option value="6"><?= __('personnel.profile.documents.types.6') ?></option>
+                                <option value="7"><?= __('personnel.profile.documents.types.7') ?></option>
+                                <option value="10"><?= __('personnel.profile.documents.types.10') ?></option>
+                                <option value="11"><?= __('personnel.profile.documents.types.11') ?></option>
+                                <option value="12"><?= __('personnel.profile.documents.types.12') ?></option>
+                                <option value="13"><?= __('personnel.profile.documents.types.13') ?></option>
                             </select>
                             <hr>
                             <div id="form-0" style="display: none;">
@@ -211,116 +211,100 @@ use App\Auth\Permissions; ?>
                                 $stmt2->execute();
                                 $rddgsel = $stmt2->fetchAll(PDO::FETCH_ASSOC);
                                 ?>
-                                <label for="erhalter_rang">Neuer Dienstgrad</label>
+                                <label for="erhalter_rang"><?= __('personnel.modals.documents.new_rank') ?></label>
                                 <select class="form-select" name="erhalter_rang" id="erhalter_rang">
-                                    <option disabled hidden selected>Bitte wählen</option>
+                                    <option disabled hidden selected><?= __('personnel.modals.documents.please_select') ?></option>
                                     <?php foreach ($dgsel as $data) {
                                         echo "<option value='{$data['id']}'>{$data['name']}</option>";
                                     } ?>
                                 </select>
-                                <label for="ausstellungsdatum_0">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_0"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_0" id="ausstellungsdatum_0" class="form-control">
                             </div>
                             <div id="form-1" style="display: none;">
                                 <input type="hidden" value=<?= $row['geschlecht'] ?> name="anrede" id="anrede">
-                                <label for="ausstellungsdatum_2">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_2"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_2" id="ausstellungsdatum_2" class="form-control">
                             </div>
                             <div id="form-2" style="display:none">
                                 <input type="hidden" value=<?= $row['geschlecht'] ?> name="anrede" id="anrede">
-                                <label for="erhalter_rang_rd">Qualifikation</label>
+                                <label for="erhalter_rang_rd"><?= __('personnel.modals.documents.qualification') ?></label>
                                 <select class="form-select" name="erhalter_rang_rd" id="erhalter_rang_rd">
-                                    <option disabled hidden selected>Bitte wählen</option>
+                                    <option disabled hidden selected><?= __('personnel.modals.documents.please_select') ?></option>
                                     <?php foreach ($rddgsel as $data2) {
                                         echo "<option value='{$data2['id']}'>{$data2['name']}</option>";
                                     } ?>
                                 </select>
-                                <label for="ausstellungsdatum_5">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_5"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_5" id="ausstellungsdatum_5" class="form-control">
                             </div>
                             <div id="form-3" style="display:none">
                                 <input type="hidden" value=<?= $row['geschlecht'] ?> name="anrede" id="anrede">
                                 <?php
-                                $qoptions = [
-                                    4 => 'Sonderfahrzeug-Maschinist/-in',
-                                    2 => 'Zugführer/-in',
-                                    1 => 'Gruppenführer/-in',
-                                    0 => 'Brandmeister/-in',
-                                ];
+                                $qoptions = larray('personnel.modals.documents.qualification_options');
                                 ?>
-                                <label for="erhalter_quali">Qualifikation</label>
+                                <label for="erhalter_quali"><?= __('personnel.modals.documents.qualification') ?></label>
                                 <select class="form-select" name="erhalter_quali" id="erhalter_quali">
-                                    <option disabled hidden selected>Bitte wählen</option>
+                                    <option disabled hidden selected><?= __('personnel.modals.documents.please_select') ?></option>
                                     <?php foreach ($qoptions as $qvalue => $qlabel) : ?>
                                         <option value="<?php echo $qvalue; ?>">
                                             <?php echo $qlabel; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <label for="ausstellungsdatum_6">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_6"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_6" id="ausstellungsdatum_6" class="form-control">
                             </div>
                             <div id="form-7" style="display:none">
                                 <input type="hidden" value=<?= $row['geschlecht'] ?> name="anrede" id="anrede">
                                 <?php
-                                $qoptions2 = [
-                                    9 => 'Luftrettungspilot/-in',
-                                    8 => 'HEMS-TC',
-                                    3 => 'Leitstellen-Disponent/-in',
-                                    5 => 'Helfergrundmodul (SEG)',
-                                    6 => 'SEG-Sanitäter/-in',
-                                    7 => 'Gruppenführer/-in-BevS',
-                                ];
+                                $qoptions2 = larray('personnel.modals.documents.qualification_options_2');
                                 ?>
-                                <label for="erhalter_quali">Qualifikation</label>
+                                <label for="erhalter_quali"><?= __('personnel.modals.documents.qualification') ?></label>
                                 <select class="form-select" name="erhalter_quali" id="erhalter_quali">
-                                    <option disabled hidden selected>Bitte wählen</option>
+                                    <option disabled hidden selected><?= __('personnel.modals.documents.please_select') ?></option>
                                     <?php foreach ($qoptions2 as $qvalue2 => $qlabel2) : ?>
                                         <option value="<?php echo $qvalue2; ?>">
                                             <?php echo $qlabel2; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <label for="ausstellungsdatum_7">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_7"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_7" id="ausstellungsdatum_7" class="form-control">
                             </div>
                             <div id="form-4" style="display:none">
                                 <input type="hidden" value=<?= $row['geschlecht'] ?> name="anrede" id="anrede">
-                                <label for="ausstellungsdatum_10">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_10"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_10" id="ausstellungsdatum_10" class="form-control">
                                 <div id="form-5" style="display:none">
-                                    <label for="suspendtime">Suspendiert bis <small>(leer lassen für unbestimmt)</small></label>
+                                    <label for="suspendtime"><?= __('personnel.modals.documents.suspended_until') ?></label>
                                     <input type="date" name="suspendtime" id="suspendtime" class="form-control">
                                 </div>
-                                <label for="inhalt">Begründung</label>
+                                <label for="inhalt"><?= __('personnel.modals.documents.reason') ?></label>
                                 <textarea name="inhalt" id="inhalt" style="resize:none"></textarea>
                             </div>
                             <div id="form-6" style="display:none">
                                 <input type="hidden" value=<?= $row['geschlecht'] ?> name="anrede" id="anrede">
                                 <?php
-                                $rdoptions2 = [
-                                    2 => 'Notfallsanitäter/-in',
-                                    1 => 'Rettungssanitäter/-in',
-                                    0 => 'Rettungssanitäter/-in in Ausbildung',
-                                ];
+                                $rdoptions2 = larray('personnel.modals.documents.qualification_options_rescue');
                                 ?>
-                                <label for="erhalter_rang_rd_2">Qualifikation</label>
+                                <label for="erhalter_rang_rd_2"><?= __('personnel.modals.documents.qualification') ?></label>
                                 <select class="form-select" name="erhalter_rang_rd_2" id="erhalter_rang_rd_2">
-                                    <option disabled hidden selected>Bitte wählen</option>
+                                    <option disabled hidden selected><?= __('personnel.modals.documents.please_select') ?></option>
                                     <?php foreach ($rdoptions2 as $rdvalue => $rdlabel) : ?>
                                         <option value="<?php echo $rdvalue; ?>">
                                             <?php echo $rdlabel; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <label for="ausstellungsdatum_3">Ausstellungsdatum</label>
+                                <label for="ausstellungsdatum_3"><?= __('personnel.modals.documents.issue_date') ?></label>
                                 <input type="date" name="ausstellungsdatum_3" id="ausstellungsdatum_3" class="form-control">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
-                        <button type="button" class="btn btn-success" id="fdq-save" onclick="document.getElementById('newDocForm').submit()">Erstellen</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('personnel.modals.documents.abort') ?></button>
+                        <button type="button" class="btn btn-success" id="fdq-save" onclick="document.getElementById('newDocForm').submit()"><?= __('personnel.modals.documents.create') ?></button>
                     </div>
                 </form>
             </div>

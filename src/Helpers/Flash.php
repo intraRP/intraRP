@@ -6,73 +6,73 @@ class Flash
 {
     private static array $alerts = [
         'role' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Rolle wurde erfolgreich gelöscht.'],
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Rolle wurde erfolgreich erstellt.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Die Rolle wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Rollen-ID.'],
+            'deleted' => ['type' => 'success'],
+            'created' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ],
         'vehicle' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Fahrzeug wurde erfolgreich gelöscht.'],
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Fahrzeug wurde erfolgreich erstellt.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Das Fahrzeug wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Fahrzeug-ID.'],
+            'deleted' => ['type' => 'success'],
+            'created' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ],
         'target' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Ziel wurde erfolgreich gelöscht.'],
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Ziel wurde erfolgreich erstellt.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Das Ziel wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Ziel-ID.'],
+            'deleted' => ['type' => 'success'],
+            'created' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ],
         'edivi' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Protokoll wurde erfolgreich gelöscht.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Das Protokoll wurde nicht gefunden.'],
+            'deleted' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
         ],
         'rank' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Der Dienstgrad wurde erfolgreich gelöscht.'],
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Der Dienstgrad wurde erfolgreich erstellt.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Der Dienstgrad wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Dienstgrad-ID.'],
+            'deleted' => ['type' => 'success'],
+            'created' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ],
         'qualification' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Qualifikation wurde erfolgreich gelöscht.'],
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Qualifikation wurde erfolgreich erstellt.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Die Qualifikation wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Qualifikations-ID.'],
+            'deleted' => ['type' => 'success'],
+            'created' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ],
         'personal' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Profil wurde erfolgreich gelöscht.'],
+            'deleted' => ['type' => 'success'],
         ],
         'user' => [
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Der Benutzer wurde erfolgreich gelöscht.'],
-            'edit-self' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Du kannst dich nicht selbst bearbeiten! Nutze dafür <a href="/admin/users/editprofile.php">Profil bearbeiten</a>.'],
-            'low-permissions' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Du kannst keine Benutzer mit den selben oder höheren Berechtigungen bearbeiten!'],
-            'new-password' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Das Passwort für den Benutzer <strong>:username</strong> wurde erfolgreich bearbeitet.<br>- Neues Passwort: <code>:pass</code>'],
+            'deleted' => ['type' => 'success'],
+            'edit-self' => ['type' => 'danger'],
+            'low-permissions' => ['type' => 'danger'],
+            'new-password' => ['type' => 'success'],
         ],
         'own' => [
-            'pw-changed' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Deine Daten & dein Passwort wurden aktualisiert!'],
-            'data-changed' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Deine Daten wurden aktualisiert!'],
+            'pw-changed' => ['type' => 'success'],
+            'data-changed' => ['type' => 'success'],
         ],
         'success' => [
-            'updated' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Änderungen erfolgreich gespeichert.'],
+            'updated' => ['type' => 'success'],
         ],
         'error' => [
-            'exception' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Beim Speichern ist ein Fehler aufgetreten.'],
-            'invalid' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Eingabe.'],
-            'not-allowed' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Keine Berechtigung.'],
-            'no-permissions' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Dazu hast du nicht die richtigen Berechtigungen!'],
-            'missing-fields' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Es wurden nicht alle Pflichtfelder ausgefüllt.'],
+            'exception' => ['type' => 'danger'],
+            'invalid' => ['type' => 'danger'],
+            'not-allowed' => ['type' => 'danger'],
+            'no-permissions' => ['type' => 'danger'],
+            'missing-fields' => ['type' => 'danger'],
         ],
         'dashboard.tile' => [
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Verlinkung wurde erfolgreich erstellt.'],
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Verlinkung wurde erfolgreich gelöscht.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Die Verlinkung wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Verlinkungs-ID.'],
+            'created' => ['type' => 'success'],
+            'deleted' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ],
         'dashboard.category' => [
-            'created' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Kategorie wurde erfolgreich erstellt.'],
-            'deleted' => ['type' => 'success', 'title' => 'Erfolg!', 'text' => 'Die Kategorie wurde erfolgreich gelöscht.'],
-            'not-found' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Die Kategorie wurde nicht gefunden.'],
-            'invalid-id' => ['type' => 'danger', 'title' => 'Fehler!', 'text' => 'Ungültige Kategorie-ID.'],
+            'created' => ['type' => 'success'],
+            'deleted' => ['type' => 'success'],
+            'not-found' => ['type' => 'danger'],
+            'invalid-id' => ['type' => 'danger'],
         ]
     ];
 
@@ -97,18 +97,18 @@ class Flash
         $alert = self::$alerts[$flash['type']][$flash['key']] ?? null;
         if (!$alert) return null;
 
-        // Inject parameters
-        $text = $alert['text'];
+        $text = _l("flash.{$flash['type']}.{$flash['key']}");
         foreach ($flash['params'] ?? [] as $key => $value) {
             $text = str_replace(':' . $key, htmlspecialchars($value), $text);
         }
 
         return [
             'type' => $alert['type'],
-            'title' => $alert['title'],
+            'title' => _l("flash.titles.{$alert['type']}"),
             'text' => $text
         ];
     }
+
 
     public static function render(): void
     {

@@ -1,5 +1,6 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
 
 ini_set('session.gc_maxlifetime', 604800);
@@ -13,6 +14,10 @@ session_start();
 if (isset($_SESSION['userid']) && isset($_SESSION['permissions'])) {
     header('Location: /admin/index.php');
 }
+
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 $checkStmt = $pdo->query("SELECT COUNT(*) FROM intra_users");
 $userCount = $checkStmt->fetchColumn();
@@ -60,14 +65,14 @@ if (isset($_GET['login'])) {
 
         if (isset($_SESSION['redirect_url'])) {
             $redirect_url = $_SESSION['redirect_url'];
-            unset($_SESSION['redirect_url']); // Remove the stored URL
+            unset($_SESSION['redirect_url']);
             header("Location: $redirect_url");
             exit();
         } else {
             header('Location: /admin/index.php');
         }
     } else {
-        $errorMessage = "Benutzername oder Passwort ungültig.<br>";
+        $errorMessage = __('login.error');
     }
 }
 ?>
@@ -78,7 +83,7 @@ if (isset($_GET['login'])) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('login.page_title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/_ext/lineawesome/css/line-awesome.min.css" />
@@ -97,9 +102,9 @@ if (isset($_GET['login'])) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 </head>
 
 <body data-bs-theme="dark" id="dashboard" class="container-full position-relative">
@@ -108,7 +113,7 @@ if (isset($_GET['login'])) {
             <div class="col">
                 <div class="card px-4 py-3">
                     <h1 id="loginHeader"><?php echo SYSTEM_NAME ?></h1>
-                    <p class="subtext">Das Intranet der Stadt <?php echo SERVER_CITY ?>!</p>
+                    <p class="subtext"><?= __('login.form.subtext', [SERVER_CITY]) ?></p>
                     <?php
                     if (isset($errorMessage)) {
                         echo '<div class="alert alert-danger mb-5" role="alert">';
@@ -118,31 +123,31 @@ if (isset($_GET['login'])) {
                     ?>
 
                     <?php if ($userCount == 0) : ?>
-                        <div class="alert alert-info mb-3">Kein Benutzer gefunden. Du erstellst jetzt den ersten Administrator-Account.</div>
+                        <div class="alert alert-info mb-3"><?= __('login.form.no_user_found') ?></div>
                         <form method="post">
-                            <strong>Benutzername:</strong><br>
+                            <strong><?= __('login.form.username') ?></strong><br>
                             <input class="form-control" type="text" size="40" maxlength="250" name="username" required><br><br>
 
-                            <strong>Vor- und Zuname (RP):</strong><br>
+                            <strong><?= __('login.form.fullname') ?></strong><br>
                             <input class="form-control" type="text" size="40" maxlength="250" name="fullname" required><br><br>
 
-                            <strong>Passwort:</strong><br>
+                            <strong><?= __('login.form.password') ?></strong><br>
                             <input class="form-control" type="password" size="40" maxlength="250" name="passwort" required><br>
 
-                            <strong>Passwort wiederholen:</strong><br>
+                            <strong><?= __('login.form.password_confirm') ?></strong><br>
                             <input class="form-control" type="password" name="passwort_confirm" required><br>
 
-                            <input class="btn btn-primary w-100" type="submit" value="Erstellen">
+                            <input class="btn btn-primary w-100" type="submit" value="<?= __('login.form.create') ?>">
                         </form>
                     <?php else : ?>
                         <form action="?login=1" method="post">
-                            <strong>Benutzername:</strong><br>
+                            <strong><?= __('login.form.username') ?></strong><br>
                             <input class="form-control" type="text" size="40" maxlength="250" name="username" required><br><br>
 
-                            <strong>Passwort:</strong><br>
+                            <strong><?= __('login.form.password') ?></strong><br>
                             <input class="form-control" type="password" size="40" maxlength="250" name="passwort" required><br>
 
-                            <input class="btn btn-primary w-100" type="submit" value="Anmelden">
+                            <input class="btn btn-primary w-100" type="submit" value="<?= __('login.form.login') ?>">
                         </form>
                     <?php endif; ?>
                 </div>

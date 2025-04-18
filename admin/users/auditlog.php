@@ -12,6 +12,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 
 use App\Auth\Permissions;
 use App\Helpers\Flash;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'audit.view'])) {
     Flash::set('error', 'no-permissions');
@@ -31,7 +34,7 @@ $uinfo = $stmtg->fetchAll(PDO::FETCH_UNIQUE);
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -53,9 +56,9 @@ $uinfo = $stmtg->fetchAll(PDO::FETCH_UNIQUE);
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -70,7 +73,7 @@ $uinfo = $stmtg->fetchAll(PDO::FETCH_UNIQUE);
                 <div class="col mb-5">
                     <hr class="text-light my-3">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h1 class="mb-0">Audit Log</h1>
+                        <h1 class="mb-0"><?= __('auditlog.title') ?></h1>
                     </div>
                     <?php
                     Flash::render();
@@ -79,11 +82,11 @@ $uinfo = $stmtg->fetchAll(PDO::FETCH_UNIQUE);
                         <table class="table table-striped" id="table-audit">
                             <thead>
                                 <tr>
-                                    <th scope="col">Zeitstempel</th>
-                                    <th scope="col">Modul</th>
-                                    <th scope="col">Aktion</th>
-                                    <th scope="col">Details</th>
-                                    <th scope="col">Benutzer</th>
+                                    <th scope="col"><?= __('auditlog.table.timestamp') ?></th>
+                                    <th scope="col"><?= __('auditlog.table.module') ?></th>
+                                    <th scope="col"><?= __('auditlog.table.action') ?></th>
+                                    <th scope="col"><?= __('auditlog.table.details') ?></th>
+                                    <th scope="col"><?= __('auditlog.table.user') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -135,26 +138,26 @@ $uinfo = $stmtg->fetchAll(PDO::FETCH_UNIQUE);
                 }],
                 language: {
                     "decimal": "",
-                    "emptyTable": "Keine Daten vorhanden",
-                    "info": "Zeige _START_ bis _END_  | Gesamt: _TOTAL_",
-                    "infoEmpty": "Keine Daten verfügbar",
-                    "infoFiltered": "| Gefiltert von _MAX_ Einträgen",
+                    "emptyTable": <?= json_encode(__('datatable.emptytable')) ?>,
+                    "info": <?= json_encode(__('datatable.info')) ?>,
+                    "infoEmpty": <?= json_encode(__('datatable.infoempty')) ?>,
+                    "infoFiltered": <?= json_encode(__('auditlog.table.datatable.infofiltered')) ?>,
                     "infoPostFix": "",
                     "thousands": ",",
-                    "lengthMenu": "_MENU_ Einträge pro Seite anzeigen",
-                    "loadingRecords": "Lade...",
-                    "processing": "Verarbeite...",
-                    "search": "Eintrag suchen:",
-                    "zeroRecords": "Keine Einträge gefunden",
+                    "lengthMenu": <?= json_encode(__('auditlog.table.datatable.lengthmenu')) ?>,
+                    "loadingRecords": <?= json_encode(__('datatable.loadingrecords')) ?>,
+                    "processing": <?= json_encode(__('datatable.processing')) ?>,
+                    "search": <?= json_encode(__('auditlog.table.datatable.search')) ?>,
+                    "zeroRecords": <?= json_encode(__('datatable.zerorecords')) ?>,
                     "paginate": {
-                        "first": "Erste",
-                        "last": "Letzte",
-                        "next": "Nächste",
-                        "previous": "Vorherige"
+                        "first": <?= json_encode(__('datatable.paginate.first')) ?>,
+                        "last": <?= json_encode(__('datatable.paginate.last')) ?>,
+                        "next": <?= json_encode(__('datatable.paginate.next')) ?>,
+                        "previous": <?= json_encode(__('datatable.paginate.previous')) ?>
                     },
                     "aria": {
-                        "sortAscending": ": aktivieren, um Spalte aufsteigend zu sortieren",
-                        "sortDescending": ": aktivieren, um Spalte absteigend zu sortieren"
+                        "sortAscending": <?= json_encode(__('datatable.aria.sortascending')) ?>,
+                        "sortDescending": <?= json_encode(__('datatable.aria.sortdescending')) ?>
                     }
                 }
             });

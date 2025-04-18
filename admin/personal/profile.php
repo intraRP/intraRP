@@ -9,13 +9,15 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 
 use App\Auth\Permissions;
 use App\Helpers\Flash;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'personnel.view'])) {
     Flash::set('error', 'no-permissions');
     header("Location: /admin/index.php");
 }
 
-//Abfrage der Nutzer ID vom Login
 $userid = $_SESSION['userid'];
 
 $stmt = $pdo->prepare("SELECT * FROM intra_mitarbeiter WHERE id = :id");
@@ -60,7 +62,6 @@ if ($row['geschlecht'] == 0) {
 
 if (isset($_POST['new'])) {
     if ($_POST['new'] == 1) {
-        // Get and sanitize input values
         $id = $_POST['id'];
         $fullname = $_POST['fullname'];
         $gebdatum = $_POST['gebdatum'];
@@ -101,25 +102,6 @@ if (isset($_POST['new'])) {
             die("Kein Datensatz gefunden.");
         }
 
-        $rdMapping = array(
-            0 => "Keine",
-            1 => "Rettungssanitäter/-in i. A.",
-            2 => "Rettungssanitäter/-in",
-            3 => "Notfallsanitäter/-in",
-            4 => "Notarzt/ärztin",
-            5 => "Ärztliche/-r Leiter/-in RD"
-        );
-
-        $bfqualiMapping = array(
-            0 => "Keine",
-            1 => "B1 - Grundausbildung",
-            2 => "B2 - Maschinist/-in",
-            3 => "B3 - Gruppenführer/-in",
-            4 => "B4 - Zugführer/-in",
-            5 => "B5 - B-Dienst",
-            6 => "B6 - A-Dienst"
-        );
-
         if ($currentDienstgrad != $dienstgrad) {
             $stmt = $pdo->prepare("UPDATE intra_mitarbeiter SET dienstgrad = :dienstgrad WHERE id = :id");
             $stmt->execute([
@@ -135,7 +117,7 @@ if (isset($_POST['new'])) {
             $stmtndg->execute(['id' => $dienstgrad]);
             $ndginfo = $stmtndg->fetch();
 
-            $logContent = 'Dienstgrad wurde von <strong>' . $cdginfo['name'] . '</strong> auf <strong>' . $ndginfo['name'] . '</strong> geändert.';
+            $logContent = __('personnel.logs.rank_changed', [$cdginfo['name'], $ndginfo['name']]);
             $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '4', :content, :paneluser)");
             $logStmt->execute([
                 'id' => $id,
@@ -159,7 +141,7 @@ if (isset($_POST['new'])) {
             $stmtnrg->execute(['id' => $qualird]);
             $nrginfo = $stmtnrg->fetch();
 
-            $logContent = 'Qualifikation (RD) wurde von <strong>' . $crginfo['name'] . '</strong> auf <strong>' . $nrginfo['name'] . '</strong> geändert.';
+            $logContent = __('personnel.logs.qualification_rd_changed', [$crginfo['name'], $nrginfo['name']]);
             $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '4', :content, :paneluser)");
             $logStmt->execute([
                 'id' => $id,
@@ -183,7 +165,7 @@ if (isset($_POST['new'])) {
             $stmtnfg->execute(['id' => $qualifw2]);
             $nfginfo = $stmtnfg->fetch();
 
-            $logContent = 'Qualifikation (FW) wurde von <strong>' . $cfginfo['name'] . '</strong> auf <strong>' . $nfginfo['name'] . '</strong> geändert.';
+            $logContent = __('personnel.logs.qualification_fw_changed', [$cfginfo['name'], $nfginfo['name']]);
             $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '5', :content, :paneluser)");
             $logStmt->execute([
                 'id' => $id,
@@ -217,16 +199,7 @@ if (isset($_POST['new'])) {
 
         if ($dataChanged) {
             if (CHAR_ID) {
-                $stmt = $pdo->prepare("UPDATE intra_mitarbeiter 
-                           SET fullname = :fullname, 
-                               gebdatum = :gebdatum, 
-                               charakterid = :charakterid, 
-                               discordtag = :discordtag, 
-                               telefonnr = :telefonnr, 
-                               dienstnr = :dienstnr, 
-                               geschlecht = :geschlecht,
-                               zusatz = :zusatzqual 
-                           WHERE id = :id");
+                $stmt = $pdo->prepare("UPDATE intra_mitarbeiter SET fullname = :fullname, gebdatum = :gebdatum, charakterid = :charakterid, discordtag = :discordtag, telefonnr = :telefonnr, dienstnr = :dienstnr, geschlecht = :geschlecht, zusatz = :zusatzqual WHERE id = :id");
                 $stmt->execute([
                     'fullname' => $fullname,
                     'gebdatum' => $gebdatum,
@@ -239,15 +212,7 @@ if (isset($_POST['new'])) {
                     'id' => $id
                 ]);
             } else {
-                $stmt = $pdo->prepare("UPDATE intra_mitarbeiter 
-                           SET fullname = :fullname, 
-                               gebdatum = :gebdatum, 
-                               discordtag = :discordtag, 
-                               telefonnr = :telefonnr, 
-                               dienstnr = :dienstnr, 
-                               geschlecht = :geschlecht,
-                               zusatz = :zusatzqual 
-                           WHERE id = :id");
+                $stmt = $pdo->prepare("UPDATE intra_mitarbeiter SET fullname = :fullname, gebdatum = :gebdatum, discordtag = :discordtag, telefonnr = :telefonnr, dienstnr = :dienstnr, geschlecht = :geschlecht, zusatz = :zusatzqual WHERE id = :id");
                 $stmt->execute([
                     'fullname' => $fullname,
                     'gebdatum' => $gebdatum,
@@ -260,9 +225,8 @@ if (isset($_POST['new'])) {
                 ]);
             }
 
-            $logContent = 'Profildaten wurden bearbeitet.';
-            $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) 
-                              VALUES (:id, '5', :content, :paneluser)");
+            $logContent = __('personnel.logs.data_changed');
+            $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '5', :content, :paneluser)");
             $logStmt->execute([
                 'id' => $id,
                 'content' => $logContent,
@@ -294,9 +258,8 @@ if (isset($_POST['new'])) {
                 'id' => $openedID
             ]);
 
-            $logContent = 'Fachdienste wurden bearbeitet.';
-            $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) 
-                              VALUES (:id, '5', :content, :paneluser)");
+            $logContent = __('personnel.logs.specialities_changed');
+            $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '5', :content, :paneluser)");
             $logStmt->execute([
                 'id' => $openedID,
                 'content' => $logContent,
@@ -367,9 +330,9 @@ if (isset($_POST['new'])) {
             'aussteller_rang' => $aussteller_rang
         ]);
 
-        $logContent = 'Ein neues Dokument (<a href="/assets/functions/docredir.php?docid=' . $new_number . '" target="_blank">#' . $new_number . '</a>) wurde erstellt.';
-        $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) 
-                              VALUES (:id, '7', :content, :paneluser)");
+        $docLink = $docLink = '<a href="/assets/functions/docredir.php?docid=' . $new_number . '" target="_blank">#' . $new_number . '</a>';
+        $logContent = __('personnel.logs.document_created', [$docLink]);
+        $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '7', :content, :paneluser)");
         $logStmt->execute([
             'id' => $profileid,
             'content' => $logContent,
@@ -390,7 +353,7 @@ if (isset($_POST['new'])) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= $row['fullname'] ?> &rsaquo; Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('personnel.title', [$row['fullname'], SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -413,9 +376,9 @@ if (isset($_POST['new'])) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -429,7 +392,7 @@ if (isset($_POST['new'])) {
             <div class="row">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1 class="mb-3">Mitarbeiterprofil</h1>
+                    <h1 class="mb-3"><?= __('personnel.profile.title') ?></h1>
                     <?php
                     require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
                     $stmt = $pdo->prepare("SELECT id, username, fullname, aktenid FROM intra_users WHERE aktenid = :aktenid");
@@ -438,15 +401,15 @@ if (isset($_POST['new'])) {
                     $panelakte = $stmt->fetch(PDO::FETCH_ASSOC);
 
                     if ($num != 0) {
+
+                        if (Permissions::check(['admin', 'users.view'])) {
+                            $profileLink = '<a href="admin/users/edit.php?id=' . $panelakte['id'] . '" class="text-decoration-none">' . $panelakte['fullname'] . ' (' . $panelakte['username'] . ')</a>';
+                        } else {
+                            $profileLink = $panelakte['fullname'] . ' (' . $panelakte['username'] . ')';
+                        }
                     ?>
                         <div class="alert alert-info" role="alert">
-                            <h5 class="fw-bold">Achtung!</h5>
-                            Dieses Mitarbeiterprofil gehört einem Funktionsträger - dieser besitzt ein registriertes Benutzerkonto im Intranet.<br>
-                            <?php if (Permissions::check(['admin', 'users.view'])) { ?>
-                                <strong>Name u. Benutzername:</strong> <a href="/admin/users/edit.php?id=<?= $panelakte['id'] ?>" class="text-decoration-none"><?= $panelakte['fullname'] ?> (<?= $panelakte['username'] ?>)</a>
-                            <?php } else { ?>
-                                <strong>Name u. Benutzername:</strong> <?= $panelakte['fullname'] ?> (<?= $panelakte['username'] ?>)
-                            <?php } ?>
+                            <?= __('personnel.profile.user_account_alert', [$profileLink]) ?>
                         </div>
                     <?php
                     }
@@ -457,14 +420,14 @@ if (isset($_POST['new'])) {
                                 <div class="row">
                                     <div class="col">
                                         <?php if (!isset($_GET['edit'])) { ?>
-                                            <div class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalNewComment" title="Notiz anlegen"><i class="las la-sticky-note"></i></div>
+                                            <div class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalNewComment" title="<?= __('personnel.profile.create_note') ?>"><i class="las la-sticky-note"></i></div>
                                         <?php } ?>
                                         <?php if (!isset($_GET['edit']) && Permissions::check(['admin', 'personnel.documents.manage'])) { ?>
-                                            <div class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalDokuCreate" title="Dokument erstellen"><i class="las la-print"></i></div>
+                                            <div class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalDokuCreate" title="<?= __('personnel.profile.create_document') ?>"><i class="las la-print"></i></div>
                                         <?php } ?>
                                         <?php if (!isset($_GET['edit']) && Permissions::check(['admin', 'personnel.edit'])) { ?>
-                                            <a href="?id=<?= $_GET['id'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '') ?>&edit" class="btn btn-dark btn-sm" id="personal-edit" title="Profil bearbeiten"><i class="las la-edit"></i></a>
-                                            <div class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalFDQuali" title="Fachdienste bearbeiten"><i class="las la-graduation-cap"></i></div>
+                                            <a href="?id=<?= $_GET['id'] . (isset($_GET['page']) ? '&page=' . $_GET['page'] : '') ?>&edit" class="btn btn-dark btn-sm" id="personal-edit" title="<?= __('personnel.profile.edit_profile') ?>"><i class="las la-edit"></i></a>
+                                            <div class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalFDQuali" title="<?= __('personnel.profile.edit_specialities') ?>"><i class="las la-graduation-cap"></i></div>
                                         <?php } elseif (isset($_GET['edit']) && Permissions::check(['admin', 'personnel.edit'])) { ?>
                                             <a href="#" class="btn btn-success btn-sm" id="personal-save" onclick="document.getElementById('profil').submit()"><i class="las la-save"></i></a>
                                             <a href="<?php echo removeEditParamFromURL(); ?>" class="btn btn-dark btn-sm"><i class="las la-arrow-left"></i></a>
@@ -473,10 +436,9 @@ if (isset($_POST['new'])) {
                                         <?php }
                                         } ?>
                                     </div>
-                                    <div class="col text-end" style="color:var(--tag-color)">Akten-ID: <?= $row['id'] ?></div>
+                                    <div class="col text-end" style="color:var(--tag-color)"><?= __('personnel.profile.files_id', [$row['id']]) ?></div>
                                 </div>
                                 <?php
-                                // Function to remove the 'edit' parameter from the URL
                                 function removeEditParamFromURL()
                                 {
                                     $currentURL = $_SERVER['REQUEST_URI'];
@@ -493,11 +455,11 @@ if (isset($_POST['new'])) {
                                     <?php if (!isset($_GET['edit']) || !Permissions::check(['admin', 'personnel.edit'])) { ?>
                                         <p class="mt-3">
                                             <?php if ($row['geschlecht'] == 0) {
-                                                $geschlechtText = "Herr";
+                                                $geschlechtText = __('personnel.profile.salutation_male');
                                             } elseif ($row['geschlecht'] == 1) {
-                                                $geschlechtText = "Frau";
+                                                $geschlechtText = __('personnel.profile.salutation_female');
                                             } else {
-                                                $geschlechtText = "Divers";
+                                                $geschlechtText = __('personnel.profile.salutation_other');
                                             }
                                             $profileName = $geschlechtText . " " . $row['fullname'];
                                             ?>
@@ -505,7 +467,7 @@ if (isset($_POST['new'])) {
                                         <?php
                                         if ($dginfo['badge']) {
                                         ?>
-                                            <img src="<?= $dginfo['badge'] ?>" height='16px' width='auto' alt='Dienstgrad' />
+                                            <img src="<?= $dginfo['badge'] ?>" height="16px" width="auto" alt="<?= __('personnel.profile.rank') ?>" />
                                         <?php } ?>
                                         <?= $dienstgradText ?><br>
                                         <?php if (!$rdginfo['none']) { ?>
@@ -525,33 +487,33 @@ if (isset($_POST['new'])) {
                                         <table class="mx-auto w-100">
                                             <tbody class="text-start">
                                                 <tr>
-                                                    <td class="fw-bold">Geburtsdatum</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.birthday') ?></td>
                                                     <td><?= $geburtstag ?></td>
                                                 </tr>
                                                 <?php if (CHAR_ID) : ?>
                                                     <tr>
-                                                        <td class="fw-bold">Charakter-ID</td>
+                                                        <td class="fw-bold"><?= __('personnel.profile.form.characterid') ?></td>
                                                         <td><?= $row['charakterid'] ?></td>
                                                     </tr>
                                                 <?php endif; ?>
                                                 <tr>
-                                                    <td class="fw-bold">Discord</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.discord') ?></td>
                                                     <td><?= $row['discordtag'] ?? 'N. hinterlegt' ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Telefonnummer</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.phone') ?></td>
                                                     <td><?= $row['telefonnr'] ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Dienstnummer</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.servicenr') ?></td>
                                                     <td><?= $row['dienstnr'] ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Position</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.position') ?></td>
                                                     <td><?= $row['zusatz'] ?? 'Keine' ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Einstellungsdatum</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.hiring_date') ?></td>
                                                     <td><?= $einstellungsdatum ?></td>
                                                 </tr>
                                             </tbody>
@@ -566,47 +528,47 @@ if (isset($_POST['new'])) {
                                         <table class="mx-auto w-100">
                                             <tbody class="text-start">
                                                 <tr>
-                                                    <td class="fw-bold">Vor- und Zuname</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.fullname') ?></td>
                                                     <td class="col-8"><input class="form-control" type="text" name="fullname" id="fullname" value="<?= $row['fullname'] ?>"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Geburtsdatum</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.birthday') ?></td>
                                                     <td><input class="form-control" type="date" name="gebdatum" id="gebdatum" value="<?= $row['gebdatum'] ?>"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Geschlecht</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.gender') ?></td>
                                                     <td>
                                                         <select name="geschlecht" id="geschlecht" class="form-select">
-                                                            <option value="0" <?php if ($row['geschlecht'] == 0) echo 'selected' ?>>Männlich</option>
-                                                            <option value="1" <?php if ($row['geschlecht'] == 1) echo 'selected' ?>>Weiblich</option>
-                                                            <option value="2" <?php if ($row['geschlecht'] == 2) echo 'selected' ?>>Divers</option>
+                                                            <option value="0" <?php if ($row['geschlecht'] == 0) echo 'selected' ?>><?= __('personnel.profile.form.gender_male') ?></option>
+                                                            <option value="1" <?php if ($row['geschlecht'] == 1) echo 'selected' ?>><?= __('personnel.profile.form.gender_female') ?></option>
+                                                            <option value="2" <?php if ($row['geschlecht'] == 2) echo 'selected' ?>><?= __('personnel.profile.form.gender_other') ?></option>
                                                         </select>
                                                     </td>
                                                 </tr>
                                                 <?php if (CHAR_ID) : ?>
                                                     <tr>
-                                                        <td class="fw-bold">Charakter-ID</td>
+                                                        <td class="fw-bold"><?= __('personnel.profile.form.characterid') ?></td>
                                                         <td><input class="form-control" type="text" name="charakterid" id="charakterid" value="<?= $row['charakterid'] ?>"></td>
                                                     </tr>
                                                 <?php endif; ?>
                                                 <tr>
-                                                    <td class="fw-bold">Discord</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.discord') ?></td>
                                                     <td><input class="form-control" type="text" name="discordtag" id="discordtag" value="<?= $row['discordtag'] ?>"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Telefonnummer</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.phone') ?></td>
                                                     <td><input class="form-control" type="text" name="telefonnr" id="telefonnr" value="<?= $row['telefonnr'] ?>"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Dienstnummer</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.servicenr') ?></td>
                                                     <td><input class="form-control" type="number" name="dienstnr" id="dienstnr" value="<?= $row['dienstnr'] ?>"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Position</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.position') ?></td>
                                                     <td><input class="form-control" type="text" name="zusatzqual" id="zusatzqual" maxlength="255" value="<?= $row['zusatz'] ?>"></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Einstellungsdatum</td>
+                                                    <td class="fw-bold"><?= __('personnel.profile.form.hiring_date') ?></td>
                                                     <td><input class="form-control" type="date" name="einstdatum" id="einstdatum" value="<?= $row['einstdatum'] ?>" readonly disabled></td>
                                                 </tr>
                                             </tbody>
@@ -617,7 +579,7 @@ if (isset($_POST['new'])) {
                         </div>
                         <div class="col ms-4 p-3 shadow-sm border ma-comments">
                             <div class="comment-settings mb-3">
-                                <h4>Kommentare/Notizen</h4>
+                                <h4><?= __('personnel.profile.title_comments') ?></h4>
                             </div>
                             <div class="comment-container">
                                 <?php include $_SERVER['DOCUMENT_ROOT'] . '/assets/components/profiles/comments/main.php' ?>
@@ -626,7 +588,7 @@ if (isset($_POST['new'])) {
                     </div>
                     <div class="row mt-3 mb-4">
                         <div class="col p-3 shadow-sm border ma-documents">
-                            <h4>Dokumente</h4>
+                            <h4><?= __('personnel.profile.title_documents') ?></h4>
                             <?php include $_SERVER['DOCUMENT_ROOT'] . '/assets/components/profiles/documents/main.php' ?>
                         </div>
                     </div>

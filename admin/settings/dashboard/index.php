@@ -11,6 +11,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 
 use App\Auth\Permissions;
 use App\Helpers\Flash;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'dashboard.manage'])) {
     Flash::set('error', 'no-permissions');
@@ -25,7 +28,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -47,9 +50,9 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -64,11 +67,11 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                 <div class="col mb-5">
                     <hr class="text-light my-3">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h1 class="mb-0">Dashboard-Konfiguration</h1>
+                        <h1 class="mb-0"><?= __('settings.dashboard.title') ?></h1>
                         <div class="btn-group">
-                            <a href="/dashboard.php" class="btn btn-outline-light me-2" target="_blank"><i class="las la-external-link-alt"></i> Dashboard aufrufen</a>
+                            <a href="/dashboard.php" class="btn btn-outline-light me-2" target="_blank"><i class="las la-external-link-alt"></i> <?= __('settings.dashboard.view_dashboard') ?></a>
                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
-                                <i class="las la-plus"></i> Kategorie erstellen
+                                <i class="las la-plus"></i> <?= __('settings.dashboard.create_category') ?>
                             </button>
                         </div>
                     </div>
@@ -106,7 +109,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#createTileModal"
                                                 data-category="<?= $row['id'] ?>">
-                                                <i class="las la-plus"></i> Neue Verlinkung
+                                                <i class="las la-plus"></i> <?= __('settings.dashboard.new_link') ?>
                                             </button>
 
                                         </div>
@@ -131,7 +134,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                                                             data-url="<?= htmlspecialchars($tile['url']) ?>"
                                                             data-icon="<?= htmlspecialchars($tile['icon']) ?>"
                                                             data-priority="<?= $tile['priority'] ?>">
-                                                            <i class="las la-pen"></i> Verlinkung bearbeiten
+                                                            <i class="las la-pen"></i> <?= __('settings.dashboard.edit_link') ?>
                                                         </button>
 
                                                     </li>
@@ -145,7 +148,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                             </div>
                         <?php }
                         if ($stmt->rowCount() == 0) {
-                            echo '<div class="alert alert-warning" role="alert">Es wurde noch kein Dashboard konfiguriert.</div>';
+                            echo '<div class="alert alert-warning" role="alert">' . __('settings.dashboard.no_dashboard') . '</div>';
                         } ?>
                     </div>
                 </div>
@@ -159,7 +162,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
             <div class="modal-content">
                 <form action="/admin/settings/dashboard/tiles/update.php" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editTileModalLabel">Verlinkung bearbeiten</h5>
+                        <h5 class="modal-title" id="editTileModalLabel"><?= __('settings.dashboard.modals.edit_link.title') ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
                     </div>
 
@@ -168,40 +171,40 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                         <input type="hidden" name="category" id="tile-category">
 
                         <div class="mb-3">
-                            <label for="tile-title" class="form-label">Titel</label>
+                            <label for="tile-title" class="form-label"><?= __('settings.dashboard.modals.edit_link.link_title') ?></label>
                             <input type="text" class="form-control" name="title" id="tile-title" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="tile-url" class="form-label">URL</label>
+                            <label for="tile-url" class="form-label"><?= __('settings.dashboard.modals.edit_link.url') ?></label>
                             <input type="text" class="form-control" name="url" id="tile-url" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="tile-icon" class="form-label">Icon <small style="opacity:.5">(z.B. <code>external-link-alt</code>)</small></label>
+                            <label for="tile-icon" class="form-label"><?= __('settings.dashboard.modals.edit_link.icon') ?></label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="icon" id="tile-icon" placeholder="z.B. home, info, cog">
+                                <input type="text" class="form-control" name="icon" id="tile-icon" placeholder="las la-home, las la-info, las la-cog">
                                 <span class="input-group-text"><i id="tile-icon-preview" class="las la-external-link-alt"></i></span>
                             </div>
                             <small class="form-text text-muted">
-                                <a href="https://icons8.com/line-awesome" target="_blank">Alle Icons ansehen</a>
+                                <a href="https://icons8.com/line-awesome" target="_blank"><?= __('settings.dashboard.modals.edit_link.view_icons') ?></a>
                             </small>
                             <div id="icon-suggestions" class="border mt-2 p-2 rounded" style="max-height: 200px; overflow-y: auto; display: none;"></div>
                         </div>
 
 
                         <div class="mb-3">
-                            <label for="tile-priority" class="form-label">Priorität</label>
+                            <label for="tile-priority" class="form-label"><?= __('settings.dashboard.modals.edit_link.priority') ?></label>
                             <input type="number" class="form-control" name="priority" id="tile-priority" required>
                         </div>
                     </div>
 
                     <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-danger" id="delete-tile-btn">Löschen</button>
+                        <button type="button" class="btn btn-danger" id="delete-tile-btn"><?= __('settings.dashboard.modals.edit_link.delete') ?></button>
 
                         <div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                            <button type="submit" class="btn btn-primary">Speichern</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('settings.dashboard.modals.edit_link.close') ?></button>
+                            <button type="submit" class="btn btn-primary"><?= __('settings.dashboard.modals.edit_link.save') ?></button>
                         </div>
                     </div>
                 </form>
@@ -220,7 +223,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
             <div class="modal-content">
                 <form action="/admin/settings/dashboard/tiles/create.php" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createTileModalLabel">Neue Verlinkung erstellen</h5>
+                        <h5 class="modal-title" id="createTileModalLabel"><?= __('settings.dashboard.modals.create_link.title') ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
                     </div>
 
@@ -228,37 +231,37 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                         <input type="hidden" name="category" id="new-tile-category">
 
                         <div class="mb-3">
-                            <label for="new-tile-title" class="form-label">Titel</label>
+                            <label for="new-tile-title" class="form-label"><?= __('settings.dashboard.modals.create_link.link_title') ?></label>
                             <input type="text" class="form-control" name="title" id="new-tile-title" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="new-tile-url" class="form-label">URL</label>
+                            <label for="new-tile-url" class="form-label"><?= __('settings.dashboard.modals.create_link.url') ?></label>
                             <input type="text" class="form-control" name="url" id="new-tile-url" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="new-tile-icon" class="form-label">Icon <small style="opacity:.5">(z.B. <code>external-link-alt</code>)</small></label>
+                            <label for="new-tile-icon" class="form-label"><?= __('settings.dashboard.modals.create_link.icon') ?></label>
                             <div class="input-group">
-                                <input type="text" class="form-control" name="icon" id="new-tile-icon" placeholder="z.B. external-link-alt">
+                                <input type="text" class="form-control" name="icon" id="new-tile-icon" placeholder="las la-home, las la-info, las la-cog">
                                 <span class="input-group-text"><i id="new-tile-icon-preview" class="las la-external-link-alt"></i></span>
                             </div>
                             <small class="form-text text-muted">
-                                <a href="https://icons8.com/line-awesome" target="_blank">Alle Icons ansehen</a>
+                                <a href="https://icons8.com/line-awesome" target="_blank"><?= __('settings.dashboard.modals.create_link.view_icons') ?></a>
                             </small>
                             <div id="new-icon-suggestions" class="border mt-2 p-2 rounded shadow-sm" style="max-height: 220px; overflow-y: auto; display: none;"></div>
                         </div>
 
 
                         <div class="mb-3">
-                            <label for="new-tile-priority" class="form-label">Priorität</label>
+                            <label for="new-tile-priority" class="form-label"><?= __('settings.dashboard.modals.create_link.priority') ?></label>
                             <input type="number" class="form-control" name="priority" id="new-tile-priority" value="0" required>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                        <button type="submit" class="btn btn-success">Erstellen</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('settings.dashboard.modals.create_link.close') ?></button>
+                        <button type="submit" class="btn btn-success"><?= __('settings.dashboard.modals.create_link.save') ?></button>
                     </div>
                 </form>
             </div>
@@ -271,7 +274,7 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
             <div class="modal-content">
                 <form action="/admin/settings/dashboard/categories/update.php" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editCategoryModalLabel">Kategorie bearbeiten</h5>
+                        <h5 class="modal-title" id="editCategoryModalLabel"><?= __('settings.dashboard.modals.edit_category.title') ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
                     </div>
 
@@ -279,21 +282,21 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
                         <input type="hidden" name="id" id="category-id">
 
                         <div class="mb-3">
-                            <label for="category-title" class="form-label">Titel</label>
+                            <label for="category-title" class="form-label"><?= __('settings.dashboard.modals.edit_category.category_title') ?></label>
                             <input type="text" class="form-control" name="title" id="category-title" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="category-priority" class="form-label">Priorität</label>
+                            <label for="category-priority" class="form-label"><?= __('settings.dashboard.modals.edit_category.priority') ?></label>
                             <input type="number" class="form-control" name="priority" id="category-priority" required>
                         </div>
                     </div>
 
                     <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-danger" id="delete-category-btn">Löschen</button>
+                        <button type="button" class="btn btn-danger" id="delete-category-btn"><?= __('settings.dashboard.modals.edit_category.delete') ?></button>
                         <div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                            <button type="submit" class="btn btn-primary">Speichern</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('settings.dashboard.modals.edit_category.close') ?></button>
+                            <button type="submit" class="btn btn-primary"><?= __('settings.dashboard.modals.edit_category.save') ?></button>
                         </div>
                     </div>
                 </form>
@@ -311,25 +314,25 @@ if (!Permissions::check(['admin', 'dashboard.manage'])) {
             <div class="modal-content">
                 <form action="/admin/settings/dashboard/categories/create.php" method="POST">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createCategoryModalLabel">Neue Kategorie erstellen</h5>
+                        <h5 class="modal-title" id="createCategoryModalLabel"><?= __('settings.dashboard.modals.create_category.title') ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
                     </div>
 
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="new-category-title" class="form-label">Titel</label>
+                            <label for="new-category-title" class="form-label"><?= __('settings.dashboard.modals.create_category.category_title') ?></label>
                             <input type="text" class="form-control" name="title" id="new-category-title" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="new-category-priority" class="form-label">Priorität</label>
+                            <label for="new-category-priority" class="form-label"><?= __('settings.dashboard.modals.create_category.priority') ?></label>
                             <input type="number" class="form-control" name="priority" id="new-category-priority" required>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                        <button type="submit" class="btn btn-success">Erstellen</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('settings.dashboard.modals.create_category.close') ?></button>
+                        <button type="submit" class="btn btn-success"><?= __('settings.dashboard.modals.create_category.save') ?></button>
                     </div>
                 </form>
             </div>

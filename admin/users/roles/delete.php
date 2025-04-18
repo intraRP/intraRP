@@ -7,6 +7,9 @@ require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check('full_admin')) {
     Flash::set('error', 'no-permissions');
@@ -36,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         Flash::set('role', 'deleted');
         $auditLogger = new AuditLogger($pdo);
-        $auditLogger->log($_SESSION['userid'], 'Rolle gelöscht [ID: ' . $id . ']', NULL, 'Rollen', 1);
+        $auditLogger->log($_SESSION['userid'], __('auditlog.role_deleted', [$id]), NULL, __('roles'), 1);
         header("Location: /admin/users/roles/index.php");
         exit;
     } catch (PDOException $e) {

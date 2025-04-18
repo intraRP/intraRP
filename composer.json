@@ -12,6 +12,9 @@
   "autoload": {
     "psr-4": {
       "App\\": "src/"
-    }
+    },
+    "files": [
+      "src/Functions.php"
+    ]
   }
 }

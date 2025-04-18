@@ -12,6 +12,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'users.create'])) {
     Flash::set('error', 'no-permissions');
@@ -44,7 +47,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     ]);
 
     $auditlogger = new AuditLogger($pdo);
-    $auditlogger->log($userid, 'Benutzer erstellt', 'Name: ' . $fullname, 'Benutzer', 1);
+    $auditlogger->log($userid, __('auditlog.user_create'), __('auditlog.user_create_details', [$fullname]), __('auditlog.users'), 1);
     header("Location: /admin/users/list.php");
 }
 ?>
@@ -56,7 +59,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -77,9 +80,9 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -93,37 +96,37 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
             <div class="row">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1>Benutzer anlegen</h1>
+                    <h1><?= __('users.create.title') ?></h1>
                     <form name="form" method="post" action="">
                         <div class="intra__tile py-2 px-3">
                             <input type="hidden" name="new" value="1" />
                             <div class="row">
                                 <div class="col mb-3">
-                                    <label for="username" class="form-label fw-bold">Benutzername <span class="text-main-color">*</span></label>
+                                    <label for="username" class="form-label fw-bold"><?= __('users.create.username') ?> <span class="text-main-color">*</span></label>
                                     <input type="text" class="form-control" id="username" name="username" placeholder="" required>
                                 </div>
                                 <div class="col mb-3">
-                                    <label for="fullname" class="form-label fw-bold">Vor- und Zuname <span class="text-main-color">*</span></label>
+                                    <label for="fullname" class="form-label fw-bold"><?= __('users.create.fullname') ?> <span class="text-main-color">*</span></label>
                                     <input type="text" class="form-control" id="fullname" name="fullname" placeholder="" required>
                                 </div>
                                 <div class="col mb-3">
-                                    <label for="password" class="form-label fw-bold">Passwort <span class="text-main-color">*</span></label>
+                                    <label for="password" class="form-label fw-bold"><?= __('users.create.password') ?> <span class="text-main-color">*</span></label>
                                     <div class="input-group">
                                         <input type="password" class="form-control" id="password" name="password" placeholder="" required>
-                                        <button title="Passwort anzeigen" class="btn btn-outline-warning" type="button" id="show-password-btn"><i class="las la-eye"></i></button>
-                                        <button title="Passwort generieren" class="btn btn-outline-primary" type="button" id="generate-password-btn"><i class="las la-random"></i></button>
+                                        <button title="<?= __('users.create.show_password') ?>" class="btn btn-outline-warning" type="button" id="show-password-btn"><i class="las la-eye"></i></button>
+                                        <button title="<?= __('users.create.generate_password') ?>" class="btn btn-outline-primary" type="button" id="generate-password-btn"><i class="las la-random"></i></button>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-4 mb-3">
-                                    <label for="aktenid" class="form-label fw-bold">Mitarbeiterakten-ID</label>
+                                    <label for="aktenid" class="form-label fw-bold"><?= __('users.create.files_id') ?></label>
                                     <input type="text" class="form-control" id="aktenid" name="aktenid" placeholder="">
                                 </div>
                                 <div class="col mb-3">
-                                    <label for="role" class="form-label fw-bold">Rolle/Gruppe <span class="text-main-color">*</span></label>
+                                    <label for="role" class="form-label fw-bold"><?= __('users.create.role') ?> <span class="text-main-color">*</span></label>
                                     <select name="role" id="role" class="form-select" required>
-                                        <option selected hidden disabled>Bitte wählen</option>
+                                        <option selected hidden disabled><?= __('users.create.role_select') ?></option>
                                         <?php
                                         require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
                                         $stmt = $pdo->prepare("SELECT * FROM intra_users_roles WHERE priority > :own_prio");
@@ -140,7 +143,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
                         </div>
                         <div class="row">
                             <div class="col mb-3 mx-auto">
-                                <input class="mt-4 btn btn-success btn-sm" name="submit" type="submit" value="Benutzer anlegen" />
+                                <input class="mt-4 btn btn-success btn-sm" name="submit" type="submit" value="<?= __('users.create.submit') ?>" />
                             </div>
                         </div>
                     </form>
@@ -150,21 +153,13 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     </div>
 
     <script>
-        // Get a reference to the generate password button
         const generatePasswordBtn = document.getElementById('generate-password-btn');
-
-        // Add a click event listener to the generate password button
         generatePasswordBtn.addEventListener('click', function() {
-            // Define the characters that can be used in the generated password
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~`|}{[]\\:;?><,./-=';
-
-            // Generate a random password of length 12
             let password = '';
             for (let i = 0; i < 12; i++) {
                 password += characters.charAt(Math.floor(Math.random() * characters.length));
             }
-
-            // Set the value of the password input to the generated password
             const passwordInput = document.getElementById('password');
             passwordInput.value = password;
         });

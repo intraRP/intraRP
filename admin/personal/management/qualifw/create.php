@@ -7,6 +7,9 @@ require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check('admin')) {
     Flash::set('error', 'no-permissions');
@@ -44,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         Flash::set('qualification', 'created');
         $auditLogger = new AuditLogger($pdo);
-        $auditLogger->log($_SESSION['userid'], 'FW Qualifikation erstellt', 'Name: ' . $name, 'Qualifikationen', 1);
+        $auditLogger->log($_SESSION['userid'], __('auditlog.fwqualifications_created'), __('auditlog.fwqualifications_created_details', [$name]), __('auditlog.qualifications'), 1);
         header("Location: /admin/personal/management/qualifw/index.php");
         exit;
     } catch (PDOException $e) {

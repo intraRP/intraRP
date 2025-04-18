@@ -14,6 +14,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'personnel.edit'])) {
     Flash::set('error', 'no-permissions');
@@ -46,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (CHAR_ID) {
             $charakterid = $_POST['charakterid'] ?? '';
             if (empty($fullname) || empty($gebdatum) || empty($charakterid) || empty($dienstgrad)) {
-                $response['message'] = "Bitte alle erforderlichen Felder ausfüllen.";
+                $response['message'] = __('personnel.create.missing_fields');
                 echo json_encode($response);
                 exit;
             }
         } else {
             if (empty($fullname) || empty($gebdatum) || empty($dienstgrad)) {
-                $response['message'] = "Bitte alle erforderlichen Felder ausfüllen.";
+                $response['message'] = __('personnel.create.missing_fields');
                 echo json_encode($response);
                 exit;
             }
@@ -96,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $savedId = $pdo->lastInsertId();
 
         $edituser = $_SESSION['cirs_user'] ?? 'Unknown';
-        $logContent = 'Mitarbeiter wurde angelegt.';
+        $logContent = __('personnel.create.personnel_created');
         $logStmt = $pdo->prepare("INSERT INTO intra_mitarbeiter_log (profilid, type, content, paneluser) VALUES (:id, '6', :content, :paneluser)");
         $logStmt->execute([
             'id' => $savedId,
@@ -127,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -149,9 +152,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 </head>
 
 <body data-bs-theme="dark" data-page="mitarbeiter">
@@ -164,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1 class="mb-3">Mitarbeiterprofil</h1>
+                    <h1 class="mb-3"><?= __('personnel.create.title') ?></h1>
                     <div class="row">
                         <div class="col">
                             <form id="profil" method="post" novalidate>
@@ -180,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                         <div class="form-floating">
                                             <select class="form-select mt-3" name="dienstgrad" id="dienstgrad">
-                                                <option value="" selected hidden>Dienstgrad wählen</option>
+                                                <option value="" selected hidden><?= __('personnel.create.select_rank') ?></option>
                                                 <?php foreach ($dgsel as $data) {
                                                     if ($dg == $data['id']) {
                                                         echo "<option value='{$data['id']}' selected='selected'>{$data['name']}</option>";
@@ -189,62 +192,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     }
                                                 } ?>
                                             </select>
-                                            <label for="dienstgrad">Dienstgrad</label>
+                                            <label for="dienstgrad"><?= __('personnel.create.rank') ?></label>
                                         </div>
-                                        <div class="invalid-feedback">Bitte wähle einen Dienstgrad aus.</div>
+                                        <div class="invalid-feedback"><?= __('personnel.create.invalid_rank') ?></div>
                                         <hr class="my-3">
                                         <input type="hidden" name="new" value="1" />
                                         <table class="mx-auto" style="width: 100%;">
                                             <tbody class="text-start">
                                                 <tr>
-                                                    <td class="fw-bold text-center" style="width:15%">Vor- und Zuname</td>
+                                                    <td class="fw-bold text-center" style="width:15%"><?= __('personnel.create.form.fullname') ?></td>
                                                     <td style="width:35%">
                                                         <input class="form-control w-100" type="text" name="fullname" id="fullname" value="" required>
-                                                        <div class="invalid-feedback">Bitte gebe einen Namen ein.</div>
+                                                        <div class="invalid-feedback"><?= __('personnel.create.form.invalid_fullname') ?></div>
                                                     </td>
-                                                    <td class="fw-bold text-center" style="width: 15%;">Geburtsdatum</td>
+                                                    <td class="fw-bold text-center" style="width: 15%;"><?= __('personnel.create.form.birthday') ?></td>
                                                     <td style="width:35%">
                                                         <input class="form-control" type="date" name="gebdatum" id="gebdatum" value="" min="1900-01-01" required>
-                                                        <div class="invalid-feedback">Bitte gebe ein Geburtsdatum ein.</div>
+                                                        <div class="invalid-feedback"><?= __('personnel.create.form.invalid_birthday') ?></div>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <?php if (CHAR_ID) : ?>
-                                                        <td class="fw-bold text-center" style="width: 15%">Charakter-ID</td>
+                                                        <td class="fw-bold text-center" style="width: 15%"><?= __('personnel.create.form.characterid') ?></td>
                                                         <td style="width: 35%;">
                                                             <input class="form-control" type="text" name="charakterid" id="charakterid" value="" pattern="[a-zA-Z]{3}[0-9]{5}" required>
-                                                            <div class="invalid-feedback">Bitte gebe eine charakter-ID ein.</div>
+                                                            <div class="invalid-feedback"><?= __('personnel.create.form.invalid_characterid') ?></div>
                                                         </td>
                                                     <?php endif; ?>
-                                                    <td class="fw-bold text-center" style="width: 15%;">Geschlecht</td>
+                                                    <td class="fw-bold text-center" style="width: 15%;"><?= __('personnel.create.form.gender') ?></td>
                                                     <td style="width: 35%;">
                                                         <select name="geschlecht" id="geschlecht" class="form-select" required>
-                                                            <option value="" selected hidden>Bitte wählen</option>
-                                                            <option value="0">Männlich</option>
-                                                            <option value="1">Weiblich</option>
-                                                            <option value="2">Divers</option>
+                                                            <option value="" selected hidden><?= __('personnel.create.form.select_gender') ?></option>
+                                                            <option value="0"><?= __('personnel.create.form.gender_male') ?></option>
+                                                            <option value="1"><?= __('personnel.create.form.gender_female') ?></option>
+                                                            <option value="2"><?= __('personnel.create.form.gender_other') ?></option>
                                                         </select>
-                                                        <div class="invalid-feedback">Bitte wähle ein Geschlecht aus.</div>
+                                                        <div class="invalid-feedback"><?= __('personnel.create.form.invalid_gender') ?></div>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold text-center">Discord</td>
+                                                    <td class="fw-bold text-center"><?= __('personnel.create.form.discord') ?></td>
                                                     <td><input class="form-control" type="text" name="discordtag" id="discordtag" value=""></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold text-center">Telefonnummer</td>
+                                                    <td class="fw-bold text-center"><?= __('personnel.create.form.phone') ?></td>
                                                     <td><input class="form-control" type="text" name="telefonnr" id="telefonnr" value="0176 00 00 00 0"></td>
-                                                    <td class="fw-bold text-center">Dienstnummer</td>
+                                                    <td class="fw-bold text-center"><?= __('personnel.create.form.servicenr') ?></td>
                                                     <td>
                                                         <input class="form-control" type="number" name="dienstnr" id="dienstnr" value="" oninput="checkDienstnrAvailability()" required>
-                                                        <div class="invalid-feedback">Bitte gebe eine Dienstnummer ein.</div>
+                                                        <div class="invalid-feedback"><?= __('personnel.create.form.invalid_servicenr') ?></div>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="fw-bold">Einstellungsdatum</td>
+                                                    <td class="fw-bold"><?= __('personnel.create.form.hiring_date') ?></td>
                                                     <td>
                                                         <input class="form-control" type="date" name="einstdatum" id="einstdatum" value="" min="2022-01-01" required>
-                                                        <div class="invalid-feedback">Bitte gebe ein Einstellungsdatum ein.</div>
+                                                        <div class="invalid-feedback"><?= __('personnel.create.form.invalid_hiring_date') ?></div>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -252,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
                                 <a href="#" class="mt-4 btn btn-success btn-sm" id="personal-save">
-                                    <i class="las la-plus-circle"></i> Benutzer erstellen
+                                    <i class="las la-plus-circle"></i> <?= __('personnel.create.form.create') ?>
                                 </a>
                             </form>
                         </div>
@@ -263,37 +266,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script>
-        var delayTimer; // Variable to hold the timer
+        var delayTimer;
 
         function checkDienstnrAvailability() {
-            clearTimeout(delayTimer); // Clear any existing timer
+            clearTimeout(delayTimer);
 
             delayTimer = setTimeout(function() {
-                var dienstnr = $('#dienstnr').val(); // Get the entered dienstnr value
+                var dienstnr = $('#dienstnr').val();
 
                 $.ajax({
-                    url: '/assets/functions/checkdnr.php', // PHP file to handle the AJAX request
+                    url: '/assets/functions/checkdnr.php',
                     method: 'POST',
                     data: {
                         dienstnr: dienstnr
-                    }, // Send dienstnr value to the server
+                    },
                     success: function(response) {
                         if (response === 'exists') {
-                            alert('Diese Dienstnummer ist bereits vergeben - wähle eine andere!');
-                            $('#dienstnr').val(''); // Clear the input field
+                            alert(<?= json_encode(__('personnel.create.servicenr_exists')) ?>);
+                            $('#dienstnr').val('');
                         }
                     }
                 });
-            }, 500); // Delay in milliseconds (adjust as needed)
+            }, 500);
         }
     </script>
     <script>
         document.getElementById("personal-save").addEventListener("click", function(event) {
-            event.preventDefault(); // Stop default button action
+            event.preventDefault();
 
             var form = document.getElementById("profil");
             if (!form.checkValidity()) {
-                form.classList.add("was-validated"); // Show validation feedback
+                form.classList.add("was-validated");
                 return;
             }
 
@@ -306,18 +309,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Show success message
                         var successAlert = document.createElement("div");
                         successAlert.className = "alert alert-success mt-3";
                         successAlert.innerHTML = data.message;
                         form.prepend(successAlert);
 
-                        // Redirect to new user profile
                         setTimeout(() => {
                             window.location.href = data.redirect;
                         }, 1500);
                     } else {
-                        // Show error message
                         var errorAlert = document.createElement("div");
                         errorAlert.className = "alert alert-danger mt-3";
                         errorAlert.innerHTML = data.message;

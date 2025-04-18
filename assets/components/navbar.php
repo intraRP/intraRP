@@ -9,68 +9,68 @@ use App\Auth\Permissions; ?>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
-                <a class="nav-link" href="/admin/index.php" data-page="dashboard"><i class="las la-home" style="margin-right:3px"></i> Dashboard</a>
+                <a class="nav-link" href="/admin/index.php" data-page="dashboard"><i class="las la-home" style="margin-right:3px"></i> <?= __('navbar.dashboard') ?></a>
                 <?php if (Permissions::check(['admin', 'users.view'])) { ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-page="benutzer" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="las la-user-secret" style="margin-right:3px"></i> Benutzer
+                            <i class="las la-user-secret" style="margin-right:3px"></i> <?= __('navbar.users') ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/admin/users/list.php">Übersicht</a></li>
+                            <li><a class="dropdown-item" href="/admin/users/list.php"><?= __('navbar.users_overview') ?></a></li>
                             <?php if (Permissions::check(['admin', 'users.create'])) { ?>
-                                <li><a class="dropdown-item" href="/admin/users/create.php">Erstellen</a></li>
+                                <li><a class="dropdown-item" href="/admin/users/create.php"><?= __('navbar.users_create') ?></a></li>
                             <?php } ?>
                             <div class="dropdown-divider"></div>
                             <?php if (Permissions::check(['admin', 'audit.view'])) { ?>
-                                <li><a class="dropdown-item" href="/admin/users/auditlog.php">Audit-Log</a></li>
+                                <li><a class="dropdown-item" href="/admin/users/auditlog.php"><?= __('navbar.audit_log') ?></a></li>
                             <?php } ?>
-                            <li><a class="dropdown-item" href="/admin/users/roles/index.php">Rollenverwaltung</a></li>
+                            <li><a class="dropdown-item" href="/admin/users/roles/index.php"><?= __('navbar.rolemanagement') ?></a></li>
                         </ul>
                     </li>
                 <?php }
                 if (Permissions::check(['admin', 'personnel.view'])) { ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-page="mitarbeiter" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="las la-suitcase" style="margin-right:3px"></i> Personal
+                            <i class="las la-suitcase" style="margin-right:3px"></i> <?= __('navbar.personnel') ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/admin/personal/list.php">Übersicht</a></li>
+                            <li><a class="dropdown-item" href="/admin/personal/list.php"><?= __('navbar.personnel_overview') ?></a></li>
                             <?php if (Permissions::check(['admin', 'personnel.edit'])) { ?>
-                                <li><a class="dropdown-item" href="/admin/personal/create.php">Erstellen</a></li>
+                                <li><a class="dropdown-item" href="/admin/personal/create.php"><?= __('navbar.personneL_create') ?></a></li>
                             <?php } ?>
                             <div class="dropdown-divider"></div>
-                            <li><a class="dropdown-item" href="/admin/personal/management/dienstgrade/index.php">Dienstgrade verwalten</a></li>
-                            <li><a class="dropdown-item" href="/admin/personal/management/qualifw/index.php">FW Qualifikationen verwalten</a></li>
-                            <li><a class="dropdown-item" href="/admin/personal/management/qualird/index.php">RD Qualifikationen verwalten</a></li>
+                            <li><a class="dropdown-item" href="/admin/personal/management/dienstgrade/index.php"><?= __('navbar.manage_ranks') ?></a></li>
+                            <li><a class="dropdown-item" href="/admin/personal/management/qualifw/index.php"><?= __('navbar.manage_fwqualifications') ?></a></li>
+                            <li><a class="dropdown-item" href="/admin/personal/management/qualird/index.php"><?= __('navbar.manage_rdqualifications') ?></a></li>
                         </ul>
                     </li>
                 <?php } ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-page="edivi" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="las la-newspaper" style="margin-right:3px"></i> RD Protokolle
+                        <i class="las la-newspaper" style="margin-right:3px"></i> <?= __('navbar.edivi') ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/edivi/protokoll.php" target="_blank">Neues Protokoll</a></li>
+                        <li><a class="dropdown-item" href="/edivi/protokoll.php" target="_blank"><?= __('navbar.new_protocol') ?></a></li>
                         <?php if (Permissions::check(['admin', 'edivi.view'])) { ?>
-                            <li><a class="dropdown-item" href="/admin/edivi/list.php">Qualitätsmanagement</a></li>
+                            <li><a class="dropdown-item" href="/admin/edivi/list.php"><?= __('navbar.quality_assurance') ?></a></li>
                             <div class="dropdown-divider"></div>
-                            <li><a class="dropdown-item" href="/admin/edivi/management/fahrzeuge/index.php">Fahrzeugverwaltung</a></li>
-                            <li><a class="dropdown-item" href="/admin/edivi/management/ziele/index.php">Zielverwaltung</a></li>
+                            <li><a class="dropdown-item" href="/admin/edivi/management/fahrzeuge/index.php"><?= __('navbar.vehicle_management') ?></a></li>
+                            <li><a class="dropdown-item" href="/admin/edivi/management/ziele/index.php"><?= __('navbar.target_management') ?></a></li>
                         <?php } ?>
                     </ul>
                 </li>
                 <?php if (Permissions::check(['admin', 'application.view'])) { ?>
-                    <li class="nav-item"><a href="/admin/antraege/list.php" class="nav-link" data-page="antrag"><i class="las la-code-branch" style="margin-right:3px"></i> Anträge</a></li>
+                    <li class="nav-item"><a href="/admin/antraege/list.php" class="nav-link" data-page="antrag"><i class="las la-code-branch" style="margin-right:3px"></i> <?= __('navbar.application') ?></a></li>
                 <?php }
                 if (Permissions::check(['admin', 'files.upload'])) { ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-page="upload" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="las la-upload" style="margin-right:3px"></i> Dateien
+                            <i class="las la-upload" style="margin-right:3px"></i> <?= __('navbar.files') ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/admin/upload/index.php">Datei hochladen</a></li>
+                            <li><a class="dropdown-item" href="/admin/upload/index.php"><?= __('navbar.files_upload') ?></a></li>
                             <?php if (Permissions::check(['admin', 'files.log.view'])) { ?>
-                                <li><a class="dropdown-item" href="/admin/upload/overview.php">Verlauf</a></li>
+                                <li><a class="dropdown-item" href="/admin/upload/overview.php"><?= __('navbar.files_log') ?></a></li>
                             <?php } ?>
                         </ul>
                     </li>
@@ -80,11 +80,11 @@ use App\Auth\Permissions; ?>
                         <?= $_SESSION['cirs_username'] ?> <span class="badge text-bg-<?= $_SESSION['role_color'] ?>"><?= $_SESSION['role_name'] ?></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/admin/users/editprofile.php">Profil bearbeiten</a></li>
+                        <li><a class="dropdown-item" href="/admin/users/editprofile.php"><?= __('navbar.edit_profile') ?></a></li>
                         <?php if (Permissions::check(['admin', 'dashboard.manage'])) { ?>
-                            <li><a class="dropdown-item" href="/admin/settings/dashboard/index.php">Dashboard-Konfiguration</a></li>
+                            <li><a class="dropdown-item" href="/admin/settings/dashboard/index.php"><?= __('navbar.manage_dashboard') ?></a></li>
                         <?php } ?>
-                        <li><a class="dropdown-item" href="/admin/logout.php">Abmelden</a></li>
+                        <li><a class="dropdown-item" href="/admin/logout.php"><?= __('navbar.logout') ?></a></li>
                     </ul>
                 </li>
             </ul>
@@ -94,11 +94,7 @@ use App\Auth\Permissions; ?>
 <script>
     $(document).ready(function() {
         var currentPage = $("body").data("page");
-
-        // Remove active class from all nav-links
         $(".nav-link").removeClass("active");
-
-        // Add active class to the appropriate nav-link
         $(".nav-link[data-page='" + currentPage + "']").addClass("active");
     });
 

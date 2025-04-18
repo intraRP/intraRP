@@ -7,6 +7,9 @@ require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check('admin')) {
     Flash::set('error', 'no-permissions');
@@ -36,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         Flash::set('rank', 'deleted');
         $auditLogger = new AuditLogger($pdo);
-        $auditLogger->log($_SESSION['userid'], 'Dienstgrad gelöscht [ID: ' . $id . ']', NULL, 'Dienstgrade', 1);
+        $auditLogger->log($_SESSION['userid'], __('auditlog.rank_deleted' . [$id]), NULL, __('auditlog.ranks'), 1);
         header("Location: /admin/personal/management/dienstgrade/index.php");
         exit;
     } catch (PDOException $e) {

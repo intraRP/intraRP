@@ -3,21 +3,7 @@ $currentFd = $row['fachdienste'];
 if (!empty($currentFd)) {
     $fdDecode = json_decode($currentFd, true);
 
-    $fdNamen = [
-        "211" => "Integrierte Leitstelle",
-        "212" => "Einsatzleitdienst",
-        "213" => "Presseabteilung",
-        "221" => "FW Schule",
-        "222" => "Personaleinsatz BF",
-        "223" => "Lager und Logistik",
-        "231" => "Spezialrettung",
-        "232" => "CBRN-Schutz",
-        "233" => "Krisenintervention",
-        "411" => "RD Schule",
-        "412" => "Einsatzleitung RD",
-        "413" => "Luftrettung",
-        "414" => "Qualitätsmanagement RD"
-    ];
+    $fdNamen = larray('personnel.specialities.names');
 
     $fd210 = [];
     $fd220 = [];
@@ -37,12 +23,12 @@ if (!empty($currentFd)) {
     }
 
     if (empty($fd210) && empty($fd220) && empty($fd230) && empty($fd410)) {
-        echo "<p class='mb-0'>Keine Fachdienste hinterlegt</p>";
+        echo "<p class='mb-0'>" . __('personnel.specialities.no_specialities') . "</p>";
     }
 
     if (!empty($fd210)) {
         echo "<div class='abteilung-container'>";
-        echo "<p class='abteilung mb-0'>Abteilung 210</p>";
+        echo "<p class='abteilung mb-0'>" . __('personnel.specialities.divisions.210') . "</p>";
         foreach ($fd210 as $item) {
             $fdNameText = $fdNamen[$item] ?? "Unknown";
             echo '<span class="badge text-bg-secondary">' . $fdNameText . '</span>';
@@ -51,7 +37,7 @@ if (!empty($currentFd)) {
     }
     if (!empty($fd220)) {
         echo "<div class='abteilung-container'>";
-        echo "<p class='abteilung mb-0'>Abteilung 220</p>";
+        echo "<p class='abteilung mb-0'>" . __('personnel.specialities.divisions.220') . "</p>";
         foreach ($fd220 as $item) {
             $fdNameText = $fdNamen[$item] ?? "Unknown";
             echo '<span class="badge text-bg-secondary">' . $fdNameText . '</span>';
@@ -60,7 +46,7 @@ if (!empty($currentFd)) {
     }
     if (!empty($fd230)) {
         echo "<div class='abteilung-container'>";
-        echo "<p class='abteilung mb-0'>Abteilung 230</p>";
+        echo "<p class='abteilung mb-0'>" . __('personnel.specialities.divisions.230') . "</p>";
         foreach ($fd230 as $item) {
             $fdNameText = $fdNamen[$item] ?? "Unknown";
             echo '<span class="badge text-bg-secondary">' . $fdNameText . '</span>';
@@ -69,7 +55,7 @@ if (!empty($currentFd)) {
     }
     if (!empty($fd410)) {
         echo "<div class='abteilung-container'>";
-        echo "<p class='abteilung mb-0'>Abteilung 410</p>";
+        echo "<p class='abteilung mb-0'>" . __('personnel.specialities.divisions.410') . "</p>";
         foreach ($fd410 as $item) {
             $fdNameText = $fdNamen[$item] ?? "Unknown";
             echo '<span class="badge text-bg-secondary">' . $fdNameText . '</span>';

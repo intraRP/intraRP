@@ -11,6 +11,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 
 use App\Auth\Permissions;
 use App\Helpers\Flash;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'users.view'])) {
     Flash::set('error', 'no-permissions');
@@ -25,7 +28,7 @@ if (!Permissions::check(['admin', 'users.view'])) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -47,9 +50,9 @@ if (!Permissions::check(['admin', 'users.view'])) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -63,17 +66,17 @@ if (!Permissions::check(['admin', 'users.view'])) {
             <div class="row">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1 class="mb-5">Benutzerübersicht</h1>
+                    <h1 class="mb-5"><?= __('users.list.title') ?></h1>
                     <?php
                     Flash::render();
                     ?>
                     <div class="intra__tile py-2 px-3">
                         <table class="table table-striped" id="userTable">
                             <thead>
-                                <th scope="col">UID</th>
-                                <th scope="col">Name (Benutzername)</th>
-                                <th scope="col">Rolle/Gruppe</th>
-                                <th scope="col">Angelegt am</th>
+                                <th scope="col"><?= __('users.list.table.id') ?></th>
+                                <th scope="col"><?= __('users.list.table.name') ?></th>
+                                <th scope="col"><?= __('users.list.table.role') ?></th>
+                                <th scope="col"><?= __('users.list.table.created_at') ?></th>
                                 <th scope="col"></th>
                             </thead>
                             <tbody>
@@ -103,9 +106,9 @@ if (!Permissions::check(['admin', 'users.view'])) {
                                     echo "<td><span class='badge text-bg-" . $role_color . "'>" . $role_name . "</span></td>";
                                     echo "<td><span style='display:none'>" . $row['created_at'] . "</span>" . $date . "</td>";
                                     if (Permissions::check(['admin', 'users.edit'])) {
-                                        echo "<td><a href='/admin/users/edit.php?id=" . $row['id'] . "' class='btn btn-sm btn-primary'>Bearbeiten</a>";
+                                        echo "<td><a href='/admin/users/edit.php?id=" . $row['id'] . "' class='btn btn-sm btn-primary'>" . __('users.list.table.manage') . "</a>";
                                         if (isset($row['aktenid']) && $row['aktenid'] > 0) {
-                                            echo " <a href='/admin/personal/profile.php?id=" . $row['aktenid'] . "' class='btn btn-sm btn-warning'>Profil</a>";
+                                            echo " <a href='/admin/personal/profile.php?id=" . $row['aktenid'] . "' class='btn btn-sm btn-warning'>" . __('users.list.table.profile') . "</a>";
                                         }
                                         echo "</td>";
                                     } else {
@@ -138,26 +141,26 @@ if (!Permissions::check(['admin', 'users.view'])) {
                 }],
                 language: {
                     "decimal": "",
-                    "emptyTable": "Keine Daten vorhanden",
-                    "info": "Zeige _START_ bis _END_  | Gesamt: _TOTAL_",
-                    "infoEmpty": "Keine Daten verfügbar",
-                    "infoFiltered": "| Gefiltert von _MAX_ Benutzern",
+                    "emptyTable": <?= json_encode(__('datatable.emptytable')) ?>,
+                    "info": <?= json_encode(__('datatable.info')) ?>,
+                    "infoEmpty": <?= json_encode(__('datatable.infoempty')) ?>,
+                    "infoFiltered": <?= json_encode(__('users.list.datatable.infofiltered')) ?>,
                     "infoPostFix": "",
                     "thousands": ",",
-                    "lengthMenu": "_MENU_ Benutzer pro Seite anzeigen",
-                    "loadingRecords": "Lade...",
-                    "processing": "Verarbeite...",
-                    "search": "Benutzer suchen:",
-                    "zeroRecords": "Keine Einträge gefunden",
+                    "lengthMenu": <?= json_encode(__('users.list.datatable.lengthmenu')) ?>,
+                    "loadingRecords": <?= json_encode(__('datatable.loadingrecords')) ?>,
+                    "processing": <?= json_encode(__('datatable.processing')) ?>,
+                    "search": <?= json_encode(__('users.list.datatable.search')) ?>,
+                    "zeroRecords": <?= json_encode(__('datatable.zerorecords')) ?>,
                     "paginate": {
-                        "first": "Erste",
-                        "last": "Letzte",
-                        "next": "Nächste",
-                        "previous": "Vorherige"
+                        "first": <?= json_encode(__('datatable.paginate.first')) ?>,
+                        "last": <?= json_encode(__('datatable.paginate.last')) ?>,
+                        "next": <?= json_encode(__('datatable.paginate.next')) ?>,
+                        "previous": <?= json_encode(__('datatable.paginate.previous')) ?>
                     },
                     "aria": {
-                        "sortAscending": ": aktivieren, um Spalte aufsteigend zu sortieren",
-                        "sortDescending": ": aktivieren, um Spalte absteigend zu sortieren"
+                        "sortAscending": <?= json_encode(__('datatable.aria.sortascending')) ?>,
+                        "sortDescending": <?= json_encode(__('datatable.aria.sortdescending')) ?>
                     }
                 }
             });

@@ -1,5 +1,11 @@
 <?php
-require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +14,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Startseite &rsaquo; <?php echo SYSTEM_NAME ?></title>
+  <title><?= __('external_dashboard.title', [SYSTEM_NAME]) ?></title>
   <!-- Stylesheets -->
   <link rel="stylesheet" href="/assets/css/style.min.css" />
   <link rel="stylesheet" href="/assets/_ext/lineawesome/css/line-awesome.min.css" />
@@ -27,9 +33,9 @@ require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
   <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
   <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
   <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-  <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+  <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
   <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-  <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+  <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 </head>
 
 <body data-bs-theme="dark" id="dashboard" class="container-full position-relative">
@@ -86,7 +92,7 @@ require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/config.php';
           </div>
         <?php }
         if ($stmt->rowCount() == 0) {
-          echo '<div class="alert alert-warning" role="alert">Es wurde noch kein Dashboard konfiguriert. Bitte konfiguriere dein Dashboard in der <a class="fw-bold link-underline" href="/admin/settings/dashboard/index.php">Administrationsoberfläche</a>.</div>';
+          echo '<div class="alert alert-warning" role="alert">' . __('external_dashboard.not_configured') . '</div>';
         } ?>
       </div>
     </div>

@@ -12,10 +12,13 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'users.edit'])) {
     Flash::set('error', 'no-permissions');
-    header("Location: /admin/users/list.php?message=error-2");
+    header("Location: /admin/users/list.php");
 }
 
 require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
@@ -65,7 +68,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     ]);
 
     $auditLogger = new AuditLogger($pdo);
-    $auditLogger->log($userid, 'Benutzer aktualisiert [ID: ' . $id . ']', NULL, 'Benutzer', 1);
+    $auditLogger->log($userid, __('auditlog.user_edited', [$id]), NULL, __('auditlog.users'), 1);
 
     header("Refresh: 0");
 }
@@ -78,7 +81,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= $row['username'] ?> &rsaquo; Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('users.edit.page_title', [$row['username'], SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -99,9 +102,9 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -115,7 +118,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
             <div class="row">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1 class="mb-3">Benutzer bearbeiten <span class="mx-3"></span> <button class="btn btn-main-color btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="las la-trash"></i> Benutzer löschen</button> <?php if (Permissions::check('admin')) : ?><button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#newPassword"><i class="las la-key"></i> Neues Passwort generieren</button><?php endif; ?></h1>
+                    <h1 class="mb-3"><?= __('users.edit.title') ?> <span class="mx-3"></span> <button class="btn btn-main-color btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="las la-trash"></i> <?= __('users.edit.delete_user') ?></button> <?php if (Permissions::check('admin')) : ?><button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#newPassword"><i class="las la-key"></i> <?= __('users.edit.generate_pass') ?></button><?php endif; ?></h1>
 
                     <form name="form" method="post" action="">
                         <input type="hidden" name="new" value="1" />
@@ -125,13 +128,13 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
                                 <div class="intra__tile py-2 px-3">
                                     <div class="row">
                                         <div class="col mb-3">
-                                            <label for="username" class="form-label fw-bold">Benutzername <span class="text-main-color">*</span></label>
+                                            <label for="username" class="form-label fw-bold"><?= __('users.edit.username') ?> <span class="text-main-color">*</span></label>
                                             <input type="text" class="form-control" id="username" name="username" placeholder="" value="<?= $row['username'] ?>" required>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col mb-3">
-                                            <label for="fullname" class="form-label fw-bold">Vor- und Zuname <span class="text-main-color">*</span></label>
+                                            <label for="fullname" class="form-label fw-bold"><?= __('users.edit.fullname') ?> <span class="text-main-color">*</span></label>
                                             <input type="text" class="form-control" id="fullname" name="fullname" placeholder="" value="<?= $row['fullname'] ?>" required>
                                         </div>
                                     </div>
@@ -141,13 +144,13 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
                                 <div class="intra__tile py-2 px-3">
                                     <div class="row">
                                         <div class="col mb-3">
-                                            <label for="aktenid" class="form-label fw-bold">Mitarbeiterakten-ID</label>
+                                            <label for="aktenid" class="form-label fw-bold"><?= __('users.edit.files_id') ?></label>
                                             <input type="number" class="form-control" id="aktenid" name="aktenid" placeholder="" value="<?= $row['aktenid'] ?? NULL ?>">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col mb-3">
-                                            <label for="role" class="form-label fw-bold">Rolle/Gruppe <span class="text-main-color">*</span></label>
+                                            <label for="role" class="form-label fw-bold"><?= __('users.edit.role') ?> <span class="text-main-color">*</span></label>
                                             <select name="role" id="role" class="form-select" required>
                                                 <?php
                                                 require $_SERVER['DOCUMENT_ROOT'] . '/assets/config/database.php';
@@ -171,24 +174,24 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
                         </div>
                         <div class="row">
                             <div class="col mb-3 mx-auto">
-                                <input class="mt-4 btn btn-success btn-sm" name="submit" type="submit" value="Änderungen speichern" />
+                                <input class="mt-4 btn btn-success btn-sm" name="submit" type="submit" value="<?= __('users.edit.save') ?>" />
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
             <?php if (Permissions::check(['admin', 'audit.view'])) : ?>
-                <h1 class="mb-3">Benutzer-Log</h1>
+                <h1 class="mb-3"><?= __('users.edit.log.title') ?></h1>
                 <div class="row">
                     <div class="col">
                         <div class="intra__tile py-2 px-3">
                             <table class="table table-striped" id="table-audit">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Zeitstempel</th>
-                                        <th scope="col">Modul</th>
-                                        <th scope="col">Aktion</th>
-                                        <th scope="col">Details</th>
+                                        <th scope="col"><?= __('users.edit.log.timestamp') ?></th>
+                                        <th scope="col"><?= __('users.edit.log.module') ?></th>
+                                        <th scope="col"><?= __('users.edit.log.action') ?></th>
+                                        <th scope="col"><?= __('users.edit.log.details') ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -227,15 +230,15 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Bestätigung erforderlich</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"><?= __('users.edit.modals.delete.title') ?></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Willst du wirklich den Benutzer <span class="fw-bold"><?= $row['username'] ?></span> löschen?
+                    <?= __('users.edit.modals.delete.text', [$row['username']]) ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary-color" data-bs-dismiss="modal">Ne, Upsi</button>
-                    <button type="button" class="btn btn-main-color" onclick="window.location.href='delete.php?id=<?= $row['id'] ?>';">Benutzer endgültig löschen</button>
+                    <button type="button" class="btn btn-secondary-color" data-bs-dismiss="modal"><?= __('users.edit.modals.delete.cancel') ?></button>
+                    <button type="button" class="btn btn-main-color" onclick="window.location.href='delete.php?id=<?= $row['id'] ?>';"><?= __('users.edit.modals.delete.confirm') ?></button>
                 </div>
             </div>
         </div>
@@ -246,15 +249,15 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="newPasswordLabel">Bestätigung erforderlich</h1>
+                        <h1 class="modal-title fs-5" id="newPasswordLabel"><?= __('users.edit.modals.generate_pass.title') ?></h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Willst du wirklich für den Benutzer <span class="fw-bold"><?= $row['username'] ?></span> ein neues Passwort generieren?
+                        <?= __('users.edit.modals.generate_pass.text', [$row['username']]) ?>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary-color" data-bs-dismiss="modal">Ne, Upsi</button>
-                        <button type="button" class="btn btn-warning" onclick="window.location.href='generatenewpass.php?id=<?= $row['id'] ?>';">Neues Passwort generieren</button>
+                        <button type="button" class="btn btn-secondary-color" data-bs-dismiss="modal"><?= __('users.edit.modals.generate_pass.cancel') ?></button>
+                        <button type="button" class="btn btn-warning" onclick="window.location.href='generatenewpass.php?id=<?= $row['id'] ?>';"><?= __('users.edit.modals.generate_pass.confirm') ?></button>
                     </div>
                 </div>
             </div>
@@ -281,26 +284,26 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
                 }],
                 language: {
                     "decimal": "",
-                    "emptyTable": "Keine Daten vorhanden",
-                    "info": "Zeige _START_ bis _END_  | Gesamt: _TOTAL_",
-                    "infoEmpty": "Keine Daten verfügbar",
-                    "infoFiltered": "| Gefiltert von _MAX_ Einträgen",
+                    "emptyTable": <?= json_encode(__('datatable.emptytable')) ?>,
+                    "info": <?= json_encode(__('datatable.info')) ?>,
+                    "infoEmpty": <?= json_encode(__('datatable.infoempty')) ?>,
+                    "infoFiltered": <?= json_encode(__('users.edit.log.datatable.infofiltered')) ?>,
                     "infoPostFix": "",
                     "thousands": ",",
-                    "lengthMenu": "_MENU_ Einträge pro Seite anzeigen",
-                    "loadingRecords": "Lade...",
-                    "processing": "Verarbeite...",
-                    "search": "Eintrag suchen:",
-                    "zeroRecords": "Keine Einträge gefunden",
+                    "lengthMenu": <?= json_encode(__('users.edit.log.datatable.lengthmenu')) ?>,
+                    "loadingRecords": <?= json_encode(__('datatable.loadingrecords')) ?>,
+                    "processing": <?= json_encode(__('datatable.processing')) ?>,
+                    "search": <?= json_encode(__('users.edit.log.datatable.search')) ?>,
+                    "zeroRecords": <?= json_encode(__('datatable.zerorecords')) ?>,
                     "paginate": {
-                        "first": "Erste",
-                        "last": "Letzte",
-                        "next": "Nächste",
-                        "previous": "Vorherige"
+                        "first": <?= json_encode(__('datatable.paginate.first')) ?>,
+                        "last": <?= json_encode(__('datatable.paginate.last')) ?>,
+                        "next": <?= json_encode(__('datatable.paginate.next')) ?>,
+                        "previous": <?= json_encode(__('datatable.paginate.previous')) ?>
                     },
                     "aria": {
-                        "sortAscending": ": aktivieren, um Spalte aufsteigend zu sortieren",
-                        "sortDescending": ": aktivieren, um Spalte absteigend zu sortieren"
+                        "sortAscending": <?= json_encode(__('datatable.aria.sortascending')) ?>,
+                        "sortDescending": <?= json_encode(__('datatable.aria.sortdescending')) ?>
                     }
                 }
             });

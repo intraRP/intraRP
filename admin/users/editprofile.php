@@ -12,6 +12,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 $userid = $_SESSION['userid'];
 
@@ -41,7 +44,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
 
         Flash::set('own', 'pw-changed');
         $auditLogger = new AuditLogger($pdo);
-        $auditLogger->log($userid, 'Passwort & Daten geändert [ID: ' . $id . ']', NULL, 'Selbst', 0);
+        $auditLogger->log($userid, __('auditlog.pw_changed', [$id]), NULL, __('auditlog.self'), 0);
         header("Refresh:0");
         exit();
     } else {
@@ -54,7 +57,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
 
         Flash::set('own', 'data-changed');
         $auditLogger = new AuditLogger($pdo);
-        $auditLogger->log($userid, 'Daten geändert [ID: ' . $id . ']', NULL, 'Selbst', 0);
+        $auditLogger->log($userid, __('auditlog.data_changed', [$id]), NULL, __('auditlog.self'), 0);
         header("Refresh:0");
         exit();
     }
@@ -68,7 +71,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profil bearbeiten &rsaquo; Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('edit_profile.page_title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -89,9 +92,9 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -105,7 +108,7 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
             <div class="row">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1 class="mb-5">Eigene Daten bearbeiten</h1>
+                    <h1 class="mb-5"><?= __('edit_profile.edit_self') ?></h1>
                     <?php
                     Flash::render();
                     ?>
@@ -115,28 +118,28 @@ if (isset($_POST['new']) && $_POST['new'] == 1) {
                             <input name="id" type="hidden" value="<?= $row['id'] ?>" />
                             <div class="row">
                                 <div class="col-6 mb-3">
-                                    <label for="fullname" class="form-label fw-bold">Vor- und Zuname</label>
+                                    <label for="fullname" class="form-label fw-bold"><?= __('edit_profile.fullname') ?></label>
                                     <input type="text" class="form-control" id="fullname" name="fullname" placeholder="" value="<?= $row['fullname'] ?>">
                                 </div>
                                 <div class="col-6 mb-3">
-                                    <label for="aktenid" class="form-label fw-bold">Mitarbeiterakten-ID</label>
+                                    <label for="aktenid" class="form-label fw-bold"><?= __('edit_profile.files_id') ?></label>
                                     <input type="number" class="form-control" id="aktenid" name="aktenid" placeholder="" value="<?= $row['aktenid'] ?>">
                                 </div>
                             </div>
                             <div class="row mt-3">
                                 <div class="col-6 mb-3">
-                                    <label for="passwort" class="form-label fw-bold">Neues Passwort</label>
-                                    <input type="password" class="form-control" id="passwort" name="passwort" placeholder="Leer lassen um nichts zu ändern">
+                                    <label for="passwort" class="form-label fw-bold"><?= __('edit_profile.new_pass') ?></label>
+                                    <input type="password" class="form-control" id="passwort" name="passwort" placeholder="<?= __('edit_profile.new_pass_placeholder') ?>">
                                 </div>
                                 <div class="col-6 mb-3">
-                                    <label for="passwort2" class="form-label fw-bold">Passwort wiederholen</label>
-                                    <input type="password" class="form-control" id="passwort2" name="passwort2" placeholder="Passwort wiederholen">
+                                    <label for="passwort2" class="form-label fw-bold"><?= __('edit_profile.new_pass_confirm') ?></label>
+                                    <input type="password" class="form-control" id="passwort2" name="passwort2" placeholder="<?= __('edit_profile.new_pass_confirm') ?>">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col mb-3 mx-auto">
-                                <input class="mt-4 btn btn-success btn-sm" name="submit" type="submit" value="Änderungen speichern" />
+                                <input class="mt-4 btn btn-success btn-sm" name="submit" type="submit" value="<?= __('edit_profile.submit') ?>" />
                             </div>
                         </div>
                     </form>

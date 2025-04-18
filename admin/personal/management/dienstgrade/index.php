@@ -11,6 +11,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 
 use App\Auth\Permissions;
 use App\Helpers\Flash;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check(['admin', 'personnel.view'])) {
     Flash::set('error', 'no-permissions');
@@ -25,7 +28,7 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -47,9 +50,9 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -64,11 +67,11 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                 <div class="col mb-5">
                     <hr class="text-light my-3">
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h1 class="mb-0">Dienstgrade verwalten</h1>
+                        <h1 class="mb-0"><?= __('personnel.rank.title') ?></h1>
 
                         <?php if (Permissions::check('admin')) : ?>
                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createDienstgradModal">
-                                <i class="las la-plus"></i> Dienstgrad erstellen
+                                <i class="las la-plus"></i> <?= __('personnel.rank.create') ?>
                             </button>
                         <?php endif; ?>
                     </div>
@@ -79,12 +82,12 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                         <table class="table table-striped" id="table-dienstgrade">
                             <thead>
                                 <tr>
-                                    <th scope="col">Priorität</th>
-                                    <th scope="col">Badge</th>
-                                    <th scope="col">Bezeichnung <i class="las la-venus-mars"></i></th>
-                                    <th scope="col">Bezeichnung <i class="las la-mars"></i></th>
-                                    <th scope="col">Bezeichnung <i class="las la-venus"></i></th>
-                                    <th scope="col">Archiv?</th>
+                                    <th scope="col"><?= __('personnel.rank.table.priority') ?></th>
+                                    <th scope="col"><?= __('personnel.rank.table.badge') ?></th>
+                                    <th scope="col"><?= __('personnel.rank.table.name') ?> <i class="las la-venus-mars"></i></th>
+                                    <th scope="col"><?= __('personnel.rank.table.name') ?> <i class="las la-mars"></i></th>
+                                    <th scope="col"><?= __('personnel.rank.table.name') ?> <i class="las la-venus"></i></th>
+                                    <th scope="col"><?= __('personnel.rank.table.archive') ?></th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -99,10 +102,10 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
 
                                     switch ($row['archive']) {
                                         case 0:
-                                            $dgActive = "<span class='badge text-bg-success'>Nein</span>";
+                                            $dgActive = "<span class='badge text-bg-success'>" . __('personnel.rank.table.no') . "</span>";
                                             break;
                                         default:
-                                            $dgActive = "<span class='badge text-bg-danger'>Ja</span>";
+                                            $dgActive = "<span class='badge text-bg-danger'>" . __('personnel.rank.table.yes') . "</span>";
                                             $dimmed = "style='color:var(--tag-color)'";
                                             break;
                                     }
@@ -110,11 +113,11 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                                     if ($row['badge'] === NULL) {
                                         $badge = "";
                                     } else {
-                                        $badge = "<img src='" . $row['badge'] . "' height='16px' width='auto' alt='Dienstgrad'>";
+                                        $badge = "<img src='" . $row['badge'] . "' height='16px' width='auto' alt='" . __('personnel.rank.rank') . "'>";
                                     }
 
                                     $actions = (Permissions::check('admin'))
-                                        ? "<a title='Fahrzeug bearbeiten' href='#' class='btn btn-sm btn-primary edit-btn' data-bs-toggle='modal' data-bs-target='#editDienstgradModal' data-id='{$row['id']}' data-name='{$row['name']}' data-name_m='{$row['name_m']}' data-name_w='{$row['name_w']}' data-badge='{$row['badge']}' data-priority='{$row['priority']}' data-archive='{$row['archive']}'><i class='las la-pen'></i></a>"
+                                        ? "<a title='" . __('personnel.rank.table.manage') . "' href='#' class='btn btn-sm btn-primary edit-btn' data-bs-toggle='modal' data-bs-target='#editDienstgradModal' data-id='{$row['id']}' data-name='{$row['name']}' data-name_m='{$row['name_m']}' data-name_w='{$row['name_w']}' data-badge='{$row['badge']}' data-priority='{$row['priority']}' data-archive='{$row['archive']}'><i class='las la-pen'></i></a>"
                                         : "";
 
                                     echo "<tr>";
@@ -143,29 +146,29 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                 <div class="modal-content">
                     <form action="/admin/personal/management/dienstgrade/update.php" method="POST">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editDienstgradModalLabel">Dienstgrad bearbeiten</h5>
+                            <h5 class="modal-title" id="editDienstgradModalLabel"><?= __('personnel.rank.modals.edit.title') ?></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="id" id="dienstgrad-id">
 
                             <div class="mb-3">
-                                <label for="dienstgrad-name" class="form-label">Bezeichnung <small style="opacity:.5">(Allgemein)</small></label>
+                                <label for="dienstgrad-name" class="form-label"><?= __('personnel.rank.modals.edit.name') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.edit.name_general') ?></small></label>
                                 <input type="text" class="form-control" name="name" id="dienstgrad-name" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="dienstgrad-name_m" class="form-label">Bezeichnung <small style="opacity:.5">(Männlich)</small></label>
+                                <label for="dienstgrad-name_m" class="form-label"><?= __('personnel.rank.modals.edit.name') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.edit.name_male') ?></small></label>
                                 <input type="text" class="form-control" name="name_m" id="dienstgrad-name_m" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="dienstgrad-name_w" class="form-label">Bezeichnung <small style="opacity:.5">(Weiblich)</small></label>
+                                <label for="dienstgrad-name_w" class="form-label"><?= __('personnel.rank.modals.edit.name') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.edit.name_female') ?></small></label>
                                 <input type="text" class="form-control" name="name_w" id="dienstgrad-name_w" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="dienstgrad-badge" class="form-label">Badge <small style="opacity:.5">(Pfad oder URL, optional)</small></label>
+                                <label for="dienstgrad-badge" class="form-label"><?= __('personnel.rank.modals.edit.badge') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.edit.badge_info') ?></small></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="badge" id="dienstgrad-badge">
                                     <span class="input-group-text p-1" id="badge-preview-container">
@@ -175,22 +178,22 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                             </div>
 
                             <div class="mb-3">
-                                <label for="dienstgrad-priority" class="form-label">Priorität <small style="opacity:.5">(Je niedriger die Zahl, desto höher sortiert)</small></label>
+                                <label for="dienstgrad-priority" class="form-label"><?= __('personnel.rank.modals.edit.priority') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.edit.priority_info') ?></small></label>
                                 <input type="number" class="form-control" name="priority" id="dienstgrad-priority" required>
                             </div>
 
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="archive" id="dienstgrad-archive">
-                                <label class="form-check-label" for="dienstgrad-archive">Archiv?</label>
+                                <label class="form-check-label" for="dienstgrad-archive"><?= __('personnel.rank.modals.edit.archive') ?></label>
                             </div>
 
                         </div>
                         <div class="modal-footer d-flex justify-content-between">
-                            <button type="button" class="btn btn-danger" id="delete-dienstgrad-btn">Löschen</button>
+                            <button type="button" class="btn btn-danger" id="delete-dienstgrad-btn"><?= __('personnel.rank.modals.edit.delete') ?></button>
 
                             <div>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                                <button type="submit" class="btn btn-primary">Speichern</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('personnel.rank.modals.edit.close') ?></button>
+                                <button type="submit" class="btn btn-primary"><?= __('personnel.rank.modals.edit.save') ?></button>
                             </div>
                         </div>
                     </form>
@@ -211,28 +214,28 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                 <div class="modal-content">
                     <form action="/admin/personal/management/dienstgrade/create.php" method="POST">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createDienstgradModalLabel">Neuen Dienstgrad anlegen</h5>
+                            <h5 class="modal-title" id="createDienstgradModalLabel"><?= __('personnel.rank.modals.create.title') ?></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
                         </div>
                         <div class="modal-body">
 
                             <div class="mb-3">
-                                <label for="new-dienstgrad-name" class="form-label">Bezeichnung <small style="opacity:.5">(Allgemein)</small></label>
+                                <label for="new-dienstgrad-name" class="form-label"><?= __('personnel.rank.modals.create.name') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.create.name_general') ?></small></label>
                                 <input type="text" class="form-control" name="name" id="new-dienstgrad-name" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="new-dienstgrad-name_m" class="form-label">Bezeichnung <small style="opacity:.5">(Männlich)</small></label>
+                                <label for="new-dienstgrad-name_m" class="form-label"><?= __('personnel.rank.modals.create.name') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.create.name_general') ?></small></label>
                                 <input type="text" class="form-control" name="name_m" id="new-dienstgrad-name_m" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="new-dienstgrad-name_w" class="form-label">Bezeichnung <small style="opacity:.5">(Weiblich)</small></label>
+                                <label for="new-dienstgrad-name_w" class="form-label"><?= __('personnel.rank.modals.create.name') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.create.name_general') ?></small></label>
                                 <input type="text" class="form-control" name="name_w" id="new-dienstgrad-name_w" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="new-dienstgrad-badge" class="form-label">Badge <small style="opacity:.5">(Pfad oder URL, optional)</small></label>
+                                <label for="new-dienstgrad-badge" class="form-label"><?= __('personnel.rank.modals.create.badge') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.create.badge_info') ?></small></label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="badge" id="new-dienstgrad-badge">
                                     <span class="input-group-text p-1" id="new-badge-preview-container">
@@ -242,19 +245,19 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                             </div>
 
                             <div class="mb-3">
-                                <label for="new-dienstgrad-priority" class="form-label">Priorität <small style="opacity:.5">(je niedriger, desto höher)</small></label>
+                                <label for="new-dienstgrad-priority" class="form-label"><?= __('personnel.rank.modals.create.priority') ?> <small style="opacity:.5"><?= __('personnel.rank.modals.create.priority_info') ?></small></label>
                                 <input type="number" class="form-control" name="priority" id="new-dienstgrad-priority" value="0" required>
                             </div>
 
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="archive" id="new-dienstgrad-archive">
-                                <label class="form-check-label" for="new-dienstgrad-archive">Archiv?</label>
+                                <label class="form-check-label" for="new-dienstgrad-archive"><?= __('personnel.rank.modals.create.archive') ?></label>
                             </div>
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
-                            <button type="submit" class="btn btn-success">Erstellen</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?= __('personnel.rank.modals.create.close') ?></button>
+                            <button type="submit" class="btn btn-success"><?= __('personnel.rank.modals.create.save') ?></button>
                         </div>
                     </form>
                 </div>
@@ -283,26 +286,26 @@ if (!Permissions::check(['admin', 'personnel.view'])) {
                 }],
                 language: {
                     "decimal": "",
-                    "emptyTable": "Keine Daten vorhanden",
-                    "info": "Zeige _START_ bis _END_  | Gesamt: _TOTAL_",
-                    "infoEmpty": "Keine Daten verfügbar",
-                    "infoFiltered": "| Gefiltert von _MAX_ Dienstgraden",
+                    "emptyTable": <?= json_encode(__('datatable.emptytable')) ?>,
+                    "info": <?= json_encode(__('datatable.info')) ?>,
+                    "infoEmpty": <?= json_encode(__('datatable.infoempty')) ?>,
+                    "infoFiltered": <?= json_encode(__('personnel.rank.datatable.infofiltered')) ?>,
                     "infoPostFix": "",
                     "thousands": ",",
-                    "lengthMenu": "_MENU_ Dienstgrade pro Seite anzeigen",
-                    "loadingRecords": "Lade...",
-                    "processing": "Verarbeite...",
-                    "search": "Dienstgrad suchen:",
-                    "zeroRecords": "Keine Einträge gefunden",
+                    "lengthMenu": <?= json_encode(__('personnel.rank.datatable.lengthmenu')) ?>,
+                    "loadingRecords": <?= json_encode(__('datatable.loadingrecords')) ?>,
+                    "processing": <?= json_encode(__('datatable.processing')) ?>,
+                    "search": <?= json_encode(__('personnel.rank.datatable.search')) ?>,
+                    "zeroRecords": <?= json_encode(__('datatable.zerorecords')) ?>,
                     "paginate": {
-                        "first": "Erste",
-                        "last": "Letzte",
-                        "next": "Nächste",
-                        "previous": "Vorherige"
+                        "first": <?= json_encode(__('datatable.paginate.first')) ?>,
+                        "last": <?= json_encode(__('datatable.paginate.last')) ?>,
+                        "next": <?= json_encode(__('datatable.paginate.next')) ?>,
+                        "previous": <?= json_encode(__('datatable.paginate.previous')) ?>
                     },
                     "aria": {
-                        "sortAscending": ": aktivieren, um Spalte aufsteigend zu sortieren",
-                        "sortDescending": ": aktivieren, um Spalte absteigend zu sortieren"
+                        "sortAscending": <?= json_encode(__('datatable.aria.sortascending')) ?>,
+                        "sortDescending": <?= json_encode(__('datatable.aria.sortdescending')) ?>
                     }
                 }
             });

@@ -10,6 +10,9 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 }
 
 use App\Helpers\Flash;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 ?>
 
@@ -20,7 +23,7 @@ use App\Helpers\Flash;
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration &rsaquo; <?php echo SYSTEM_NAME ?></title>
+    <title><?= __('title', [SYSTEM_NAME]) ?></title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/assets/css/style.min.css" />
     <link rel="stylesheet" href="/assets/css/admin.min.css" />
@@ -41,9 +44,9 @@ use App\Helpers\Flash;
     <meta name="theme-color" content="<?php echo SYSTEM_COLOR ?>" />
     <meta property="og:site_name" content="<?php echo SERVER_NAME ?>" />
     <meta property="og:url" content="https://<?php echo SYSTEM_URL ?>/dashboard.php" />
-    <meta property="og:title" content="<?php echo SYSTEM_NAME ?> - Intranet <?php echo SERVER_CITY ?>" />
+    <meta property="og:title" content="<?= __('metas.title', [SYSTEM_NAME, SERVER_CITY]) ?>" />
     <meta property="og:image" content="<?php echo META_IMAGE_URL ?>" />
-    <meta property="og:description" content="Verwaltungsportal der <?php echo RP_ORGTYPE . " " .  SERVER_CITY ?>" />
+    <meta property="og:description" content="<?= __('metas.description', [RP_ORGTYPE, SERVER_CITY]) ?>" />
 
 </head>
 
@@ -59,12 +62,12 @@ use App\Helpers\Flash;
             <div class="row" id="startpage">
                 <div class="col mb-5">
                     <hr class="text-light my-3">
-                    <h1>Dashboard</h1>
+                    <h1><?= Lang::get('dashboard.dashboard') ?></h1>
                     <?php
                     Flash::render();
                     ?>
                     <div class="alert alert-primary" role="alert">
-                        <h3>Hallo, <?= $_SESSION['cirs_user'] ?>!</h3>
+                        <h3><?= __('dashboard.welcome', [$_SESSION['cirs_user']]) ?></h3>
                         <span id="quote-of-the-day"></span>
                         <br>
                     </div>
@@ -78,17 +81,12 @@ use App\Helpers\Flash;
                             $data3 = [];
                             $labels3 = [];
 
-                            $antragStatus = [
-                                0 => "in Bearbeitung",
-                                1 => "Abgelehnt",
-                                2 => "Aufgeschoben",
-                                3 => "Angenommen",
-                            ];
+                            $antragStatus = larray('dashboard.charts.application.status');
 
                             if (!empty($result3)) {
                                 foreach ($result3 as $row) {
                                     $status = $row['cirs_status'];
-                                    $rankLabel = isset($antragStatus[$status]) ? $antragStatus[$status] : 'Unbekannt';
+                                    $rankLabel = isset($antragStatus[$status]) ? $antragStatus[$status] : __('dashboard.charts.unknown');
 
                                     $data3[] = $row['count'];
                                     $labels3[] = $rankLabel;
@@ -105,9 +103,9 @@ use App\Helpers\Flash;
                                     data: {
                                         labels: <?php echo json_encode($labels3); ?>,
                                         datasets: [{
-                                            label: 'Beförderungsanträge',
+                                            label: <?= json_encode(__('dashboard.charts.application.title')) ?>,
                                             data: <?php echo json_encode($data3); ?>,
-                                            backgroundColor: 'rgba(110, 168, 254, .7)', // Example color
+                                            backgroundColor: 'rgba(110, 168, 254, .7)',
                                             borderWidth: 1
                                         }]
                                     },
@@ -125,12 +123,7 @@ use App\Helpers\Flash;
                         <div class="col intra__tile">
 
                             <?php
-                            $statusMapping = [
-                                0 => 'Ungesehen',
-                                1 => 'in Prüfung',
-                                2 => 'Freigegeben',
-                                3 => 'Ungenügend',
-                            ];
+                            $statusMapping = larray('dashboard.charts.edivi.status');
 
                             $stmt = $pdo->prepare("SELECT protokoll_status, COUNT(*) as count FROM intra_edivi GROUP BY protokoll_status");
                             $stmt->execute();
@@ -157,9 +150,9 @@ use App\Helpers\Flash;
                                     data: {
                                         labels: <?php echo json_encode($labels2); ?>,
                                         datasets: [{
-                                            label: 'eDIVI-Protokolle',
+                                            label: <?= json_encode(__('dashboard.charts.edivi.title')) ?>,
                                             data: <?php echo json_encode($data2); ?>,
-                                            backgroundColor: 'rgba(255, 164, 47, .7)', // Example color
+                                            backgroundColor: 'rgba(255, 164, 47, .7)',
                                             borderWidth: 1
                                         }]
                                     },
@@ -179,16 +172,18 @@ use App\Helpers\Flash;
             </div>
         </div>
     </div>
+    <?php
+    $quotes = [
+        __('dashboard.quotes.quote-1', [RP_ORGTYPE, SERVER_CITY]),
+        __('dashboard.quotes.quote-2'),
+        __('dashboard.quotes.quote-3', [SERVER_CITY, RP_ORGTYPE, '']),
+        __('dashboard.quotes.quote-4', [RP_ORGTYPE, SERVER_CITY]),
+        __('dashboard.quotes.quote-5', [SYSTEM_NAME]),
+    ];
+    ?>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const quotes = [
-                "Willkommen im Intranet der <?php echo RP_ORGTYPE . " " . SERVER_CITY ?>.",
-                "Fun Fact: Die ersten Rettungswagen waren Leichenwagen. Manchmal kamen Bestatter an und mussten feststellen, dass die Person noch gar nicht gestorben war.",
-                "Das Schweizer Taschenmesser der <?php echo SERVER_CITY ?>er <?php echo RP_ORGTYPE ?>.",
-                "Die <?php echo RP_ORGTYPE . " " . SERVER_CITY ?> - Immer für Sie da.",
-                "<?php echo SYSTEM_NAME ?> powered by hypax."
-            ];
-
+            const quotes = <?= json_encode($quotes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
             document.getElementById("quote-of-the-day").textContent = randomQuote;

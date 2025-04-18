@@ -13,13 +13,15 @@ if (!isset($_SESSION['userid']) || !isset($_SESSION['permissions'])) {
 use App\Auth\Permissions;
 use App\Helpers\Flash;
 use App\Utils\AuditLogger;
+use App\Localization\Lang;
+
+Lang::setLanguage(LANG ?? 'de');
 
 if (!Permissions::check('admin')) {
     Flash::set('error', 'no-permissions');
     header("Location: /admin/users/list.php");
 }
 
-//Abfrage der Nutzer ID vom Login
 $userid = $_SESSION['userid'];
 
 $id = $_GET['id'];
@@ -30,6 +32,6 @@ $stmt->bindParam(':id', $id);
 $stmt->execute();
 
 $auditlogger = new AuditLogger($pdo);
-$auditlogger->log($userid, 'Dokument gelöscht [ID: ' . $id . ']', NULL, 'Mitarbeiter', 1);
+$auditlogger->log($userid, __('auditlog.document_deleted', [$id]), NULL, __('auditlog.personnel'), 1);
 header("Location: " . $_SERVER['HTTP_REFERER']);
 exit;

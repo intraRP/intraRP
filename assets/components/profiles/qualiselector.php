@@ -14,5 +14,5 @@ $bfqsel = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         } ?>
     </select>
-    <label for="qualifw2">Qualifikation Feuerwehr</label>
+    <label for="qualifw2"><?= __('personnel.selectors.qualification_fire') ?></label>
 </div>
